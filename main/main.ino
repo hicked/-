@@ -1,20 +1,8 @@
 #include <FastLED.h>
 
-// LED strip configuration
-#define LED_PIN     7
-#define NUM_LEDS    66
-#define LED_TYPE WS2812B
-
-#define BACKLIGHT_COLOR CRGB(0, 1, 0) // Dim red for the background
-
 // Brightness configuration
-#define GLOBAL_BRIGHTNESS 255
-#define MIN_BRAKE_BRIGHTNESS  50
-#define MAX_BRAKE_BRIGHTNESS  150
 
-#define FLASH_SPEED 50
-#define EMERGENCY_BRAKING_FLASH_LENGTH 25
-#define INITIALIZE_BRAKING_FLASH_LENGTH 7
+
 
 #define MIN_GYRO 0
 #define MAX_GYRO 100
@@ -29,13 +17,6 @@ int encoderPosition = 0; // Tracks the encoder position
 bool prevA = 1;
 bool prevB = 1;
 
-unsigned long lastFlashTime = 0;
-bool flashON = false;
-bool initializedBraking = false; // Flag to track the first braking event
-bool initializedEmergencyBraking = false;
-int flashCount = 0; // Counter to track how many flashes need to occur
-
-CRGB leds[NUM_LEDS];
 
 void setup() {
   // Initialize LED strip
