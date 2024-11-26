@@ -7,6 +7,15 @@ Brake::Brake(CRGB *leds, int num_leds) {
 
 void Brake::Update() {
     this->SetSolid(BACKLIGHT_COLOR);
+    if (!this->accelerating) {
+        if (this->prevNumActiveLEDs <= INITIAL_BRAKE_THRESHHOLD && this->numActiveLEDs > INITIAL_BRAKE_THRESHHOLD) {
+            flashCount = INITIALIZE_BRAKING_FLASH_LENGTH;
+        }
+        else if (this->prevNumActiveLEDs <= EMERGENCY_BRAKING_THRESHOLD && this->numActiveLEDs > EMERGENCY_BRAKING_THRESHOLD) {
+            flashCount = EMERGENCY_BRAKING_FLASH_LENGTH;
+        }
+        this->prevNumActiveLEDs = this->numActiveLEDs;
+    }
 
     if (this->flashCount > 0) {
         this->FlashRedLEDs();
@@ -25,7 +34,7 @@ void Brake::FlashRedLEDs() {
         this->flashON = !this->flashON;
 
         if (this->flashON) {
-            this->SetSolid(CRGB::Red); // Flash red
+            this->SetSolid(CRGB(0, 255, 0)); // Flash red
         } else {
             this->SetSolid(BACKLIGHT_COLOR); // Reset to background
         }
@@ -34,15 +43,29 @@ void Brake::FlashRedLEDs() {
 }
 
 void Brake::UpdateBrakeLEDs() {
+    int middleIndex = this->numLEDs / 2;
+
     if (!this->accelerating) {
-        for (int i = 0; i < this->num_brake_leds; i++) {
-            this->LEDStrip[this->num_brake_leds / 2 + i] = CRGB(0, this->active_brightness, 0); // red brake color
-            this->LEDStrip[this->num_brake_leds / 2 - i - 1] = CRGB(0, this->active_brightness, 0);
+        for (int i = 0; i < this->numActiveLEDs; i++) {
+            int index1 = middleIndex + i;
+            int index2 = middleIndex - i - 1;
+            if (index1 >= 0 && index1 < this->numLEDs) {
+                this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // red brake color
+            }
+            if (index2 >= 0 && index2 < this->numLEDs) {
+                this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
+            }
         }
     } else if (this->accelerating) {
-        for (int i = 0; i < this->numLEDs; i++) {
-            this->LEDStrip[this->num_brake_leds / 2 + i] = CRGB(this->active_brightness, 0, 0); // Green brake color
-            this->LEDStrip[this->num_brake_leds / 2 - i - 1] = CRGB(this->active_brightness, 0, 0);
+        for (int i = 0; i < this->numActiveLEDs; i++) {
+            int index1 = middleIndex + i;
+            int index2 = middleIndex - i - 1;
+            if (index1 >= 0 && index1 < this->numLEDs) {
+                this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // Green brake color
+            }
+            if (index2 >= 0 && index2 < this->numLEDs) {
+                this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
+            }
         }
     }
 }
