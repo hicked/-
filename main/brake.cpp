@@ -29,7 +29,7 @@ void Brake::Update() {
 void Brake::FlashRedLEDs() {
     unsigned long currentMillis = millis();
 
-    if (currentMillis - this->lastFlashTime >= FLASH_SPEED) {
+    if (currentMillis - this->lastFlashTime >= FLASH_DELAY) {
         this->lastFlashTime = currentMillis;
         this->flashON = !this->flashON;
 
