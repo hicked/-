@@ -1,13 +1,14 @@
 #include <FastLED.h>
+#include "brake.h"
+
+#define LED_DATA_PIN 7
+#define NUM_LEDS 66
+#define LED_TYPE WS2812B
+#define GLOBAL_BRIGHTNESS 255
 
 // Brightness configuration
-
-
-
 #define MIN_GYRO 0
 #define MAX_GYRO 100
-#define EMERGENCY_BRAKING_THRESHOLD 95
-#define MIN_GYRO_BRAKE_THRESHHOLD 5
 
 // Encoder configuration
 #define ENCODER_PIN_A   3
@@ -17,10 +18,11 @@ int encoderPosition = 0; // Tracks the encoder position
 bool prevA = 1;
 bool prevB = 1;
 
+CRGB leds[NUM_LEDS];
+Brake brake(leds, NUM_LEDS);
 
 void setup() {
-  // Initialize LED strip
-  FastLED.addLeds<LED_TYPE, LED_PIN, RGB>(leds, NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, LED_DATA_PIN, RGB>(leds, NUM_LEDS);
   FastLED.clear();
   FastLED.setBrightness(GLOBAL_BRIGHTNESS);
   FastLED.show();
@@ -48,73 +50,38 @@ void loop() {
 
   // Handle braking events
   if (encoderPosition < MIN_GYRO_BRAKE_THRESHHOLD) {
-    initializedBraking = false;
+    brake.initializedBraking = false;
   }
 
-  else if (encoderPosition > MIN_GYRO_BRAKE_THRESHHOLD && !initializedBraking) {
-    initializedBraking = true;
-    flashCount = INITIALIZE_BRAKING_FLASH_LENGTH;  // Flash 5 times when braking starts
+  else if (encoderPosition > MIN_GYRO_BRAKE_THRESHHOLD && !brake.initializedBraking) {
+    brake.initializedBraking = true;
+    brake.flashCount = brake.initializedEmergencyBraking;  // Flash 5 times when braking starts
   }
-  else if (encoderPosition < EMERGENCY_BRAKING_THRESHOLD && initializedEmergencyBraking) {
-    initializedEmergencyBraking = false;
+  else if (encoderPosition < brake.emergencyBrakingThreshold && brake.initializedEmergencyBraking) {
+    brake.initializedEmergencyBraking = false;
   }
   // Handle emergency braking event when encoder reaches 100
-  else if (!initializedEmergencyBraking && encoderPosition > EMERGENCY_BRAKING_THRESHOLD) {
-    initializedEmergencyBraking = true;
-    flashCount = EMERGENCY_BRAKING_FLASH_LENGTH;  // Flash 10 times for emergency braking
+  else if (!brake.initializedEmergencyBraking && encoderPosition > brake.emergencyBrakingThreshold) {
+    brake.initializedEmergencyBraking = true;
+    brake.flashCount = brake.emergencyBrakingNumFlashes;  // Flash 10 times for emergency braking
   }
-  
-
-  fill_solid(leds, NUM_LEDS, BACKLIGHT_COLOR);
 
   // Set the number of LEDs and brightness based on encoder position
-  int num_braking_leds = map(encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS/2);
-  int active_brake_brightness = map(encoderPosition, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+  brake.num_brake_leds = map(encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS/2);
+  brake.active_brightness = map(encoderPosition, MIN_GYRO, MAX_GYRO, brake.minBrakeBrightness, brake.maxBrakeBrightness);
   
   // Handle flashing if braking is initiated
-  if (flashCount > 0) {
-    FlashRedLEDs(); // Flashing logic
-  }
-  else {
-    for (int i = 0; i < num_braking_leds; i++) {
-      leds[NUM_LEDS/2 + i] = CRGB(0, active_brake_brightness, 0); 
-      leds[NUM_LEDS/2 - i - 1] = CRGB(0, active_brake_brightness, 0); 
-    }
-  }
-
-  FastLED.show();
+  brake.Update();
   
   // Debug output
   Serial.print("encoderPosition: ");
   Serial.print(encoderPosition);
   Serial.print(" | Active Brightness: ");
-  Serial.print(active_brake_brightness);
+  Serial.print(brake.active_brightness);
   Serial.print(" | Number of LEDs On: ");
-  Serial.println(num_braking_leds * 2);
+  Serial.println(brake.num_brake_leds * 2);
 }
 
-void FlashRedLEDs() {
-  unsigned long currentMillis = millis();
-
-  // Check if it's time to toggle the flashing state
-  if (currentMillis - lastFlashTime >= FLASH_SPEED) {
-    lastFlashTime = currentMillis;
-    flashON = !flashON; // Toggle the flash state
-    if (flashON) {
-      fill_solid(leds, NUM_LEDS, CRGB(0, MAX_BRAKE_BRIGHTNESS, 0));  // Flash red at MAX_BRIGHTNESS
-    } else {
-      fill_solid(leds, NUM_LEDS, BACKLIGHT_COLOR);  // Reset to background color
-    }
-    flashCount--;  // Decrease the flash count once per toggle
-  }
-
-  // If flashCount is 0, stop flashing and reset the state
-  if (flashCount <= 0) {
-    flashCount = 0;  // Ensure it doesn't go negative
-    fill_solid(leds, NUM_LEDS, BACKLIGHT_COLOR);  // Reset LEDs to background color
-    flashON = false;  // Reset flashON to ensure it starts fresh if flashCount is reset again
-  }
-}
 
 int CheckEncoderRotation() {
   int delta = 0;
