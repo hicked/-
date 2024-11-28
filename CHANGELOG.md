@@ -22,3 +22,6 @@ Date is in YYYY/MM/DD format.
 -   Mario Star mode for acceleration, can be turned off in header
 -   Flash when initialize braking
 -   Flash continuously when hard braking
+
+https://github.com/user-attachments/assets/23fc0a4a-a3bb-4595-a7d4-98dc2ed54147
+
