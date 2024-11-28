@@ -136,8 +136,9 @@ unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 50;
 
 CRGB leds[NUM_LEDS];
-Brake brake(leds, NUM_LEDS);
-Signals signals(&brake, leds, NUM_LEDS);
+
+Signals signals(leds, NUM_LEDS);
+Brake brake(&signals, leds, NUM_LEDS);
 
 void setup() {
     FastLED.addLeds<LED_TYPE, LED_DATA_PIN, RGB>(leds, NUM_LEDS);
@@ -176,11 +177,11 @@ void loop() {
     if (encoderPosition < 0) {
         brake.accelerating = true;
         brake.numActiveLEDs = map(-encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
-        brake.active_brightness = map(-encoderPosition, MIN_GYRO, MAX_GYRO, brake.minBrakeBrightness, brake.maxBrakeBrightness);
+        brake.active_brightness = map(-encoderPosition, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
     } else {
         brake.accelerating = false;
         brake.numActiveLEDs = map(encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
-        brake.active_brightness = map(encoderPosition, MIN_GYRO, MAX_GYRO, brake.minBrakeBrightness, brake.maxBrakeBrightness);
+        brake.active_brightness = map(encoderPosition, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
     }
 
     // Debounce the encoder click
@@ -191,10 +192,20 @@ void loop() {
     }
     
     prevClickState = currentClickState;
-
-    // Handle flashing if braking is initiated
+    
     brake.Update();
     signals.Update();
+    if (SHOW_MARIO && brake.accelerating && brake.numActiveLEDs > MARIO_STAR_THRESHHOLD) {
+        brake.MarioStar();
+    }
+    else if (brake.flashCount == 0) {
+        brake.UpdateBrakeLEDs();
+        signals.UpdateSignals();
+    }  
+    else { // handled outside brake.update() since we want it to go OVER the turn signals
+        brake.FlashRedLEDs();
+    }
+    FastLED.show();
 
     // Debug output
     // Serial.print("encoderPosition: ");
@@ -216,7 +227,6 @@ void handleEncoderA() {
 void handleEncoderB() {
     updateEncoder();
 }
-
 // Function to update encoder position
 void updateEncoder() {
     bool A = digitalRead(ENCODER_PIN_A);
