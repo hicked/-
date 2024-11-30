@@ -31,15 +31,15 @@ Gyro::Gyro() {
     if (this->initialAccY/16300.0 > MIN_GYRO_ERROR) {
         Serial.println("WARNING, Y AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
     }
-    if (this->initialAccZ/16300.0 > MIN_GYRO_ERROR) {
+    if ((this->initialAccZ/16300.0)-1.0 > MIN_GYRO_ERROR) {
         Serial.println("WARNING, Z AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
     }
     Serial.println("GYRO SETUP");
-    Serial.print("Initial Accel X");
+    Serial.print("Initial Accel X: ");
     Serial.println(this->initialAccX/16300.0);
-    Serial.print("Initial Accel Y");
+    Serial.print("Initial Accel Y: ");
     Serial.println(this->initialAccY/16300.0);
-    Serial.print("Initial Accel Z");
+    Serial.print("Initial Accel Z: ");
     Serial.println(this->initialAccZ/16300.0);
 }
 
