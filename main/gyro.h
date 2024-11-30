@@ -1,8 +1,7 @@
 #include <Wire.h>
 
-#define MIN_GYRO_THRESHOLD 0.025 // should be 2.5% of max?
-#define MIN_GYRO_ERROR_THRESHOLD 0.03
-#define MIN_GYRO 0
+#define MIN_GYRO_ERROR 0.25
+#define MIN_GYRO 0.3
 #define MAX_GYRO 1
 /*
     VCC -> 3.3 V / 5 V (better) 

@@ -55,7 +55,7 @@ void loop() {
     Serial.print("accY: ");
     Serial.println(gyro->accY);
 
-    if (gyro->accY * (gyro->accY>=0 ? 1 : -1) > MIN_GYRO_THRESHOLD) {
+    if (gyro->accY * (gyro->accY>=0 ? 1 : -1) > MIN_GYRO) {
         if (gyro->accY > 0) {
             brake.accelerating = true;
             brake.numActiveLEDs = map(gyro->accY*1000, MIN_GYRO*1000, MAX_GYRO*1000, 0, NUM_LEDS / 2);

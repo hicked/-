@@ -25,15 +25,15 @@ Gyro::Gyro() {
         Serial.println("Failed to read from MPU");
     }
 
-    if (this->initialAccX/16300.0 > MIN_GYRO_ERROR_THRESHOLD) {
+    if (this->initialAccX/16300.0 > MIN_GYRO_ERROR) {
         Serial.println("WARNING, X AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
         Serial.println(this->initialAccX/16300.0);
     }
-    if (this->initialAccY/16300.0 > MIN_GYRO_ERROR_THRESHOLD) {
+    if (this->initialAccY/16300.0 > MIN_GYRO_ERROR) {
         Serial.println("WARNING, Y AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
         Serial.println(this->initialAccY/16300.0);
     }
-    if (this->initialAccZ/16300.0 > MIN_GYRO_ERROR_THRESHOLD) {
+    if (this->initialAccZ/16300.0 > MIN_GYRO_ERROR) {
         Serial.println("WARNING, Z AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
         Serial.println(this->initialAccZ/16300.0);
     }
