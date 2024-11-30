@@ -27,16 +27,20 @@ Gyro::Gyro() {
 
     if (this->initialAccX/16300.0 > MIN_GYRO_ERROR) {
         Serial.println("WARNING, X AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
-        Serial.println(this->initialAccX/16300.0);
     }
     if (this->initialAccY/16300.0 > MIN_GYRO_ERROR) {
         Serial.println("WARNING, Y AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
-        Serial.println(this->initialAccY/16300.0);
     }
     if (this->initialAccZ/16300.0 > MIN_GYRO_ERROR) {
         Serial.println("WARNING, Z AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
-        Serial.println(this->initialAccZ/16300.0);
     }
+    Serial.println("GYRO SETUP");
+    Serial.print("Initial Accel X");
+    Serial.println(this->initialAccX/16300.0);
+    Serial.print("Initial Accel Y");
+    Serial.println(this->initialAccY/16300.0);
+    Serial.print("Initial Accel Z");
+    Serial.println(this->initialAccZ/16300.0);
 }
 
 void Gyro::Update() {
