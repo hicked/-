@@ -1,15 +1,12 @@
 #include <FastLED.h>
 #include "brake.h"
 #include "signals.h"
+#include "gyro.h"
 
 #define LED_DATA_PIN 7
 #define NUM_LEDS 66
 #define LED_TYPE WS2812B
 #define GLOBAL_BRIGHTNESS 255
-
-// Brightness configuration
-#define MIN_GYRO 0
-#define MAX_GYRO 100
 
 // Encoder configuration
 #define ENCODER_PIN_A   3
@@ -27,6 +24,7 @@ CRGB leds[NUM_LEDS];
 
 Signals signals(leds, NUM_LEDS);
 Brake brake(&signals, leds, NUM_LEDS);
+Gyro* gyro;
 
 void setup() {
     FastLED.addLeds<LED_TYPE, LED_DATA_PIN, RGB>(leds, NUM_LEDS);
@@ -36,10 +34,8 @@ void setup() {
 
     // Initialize Serial for debugging
     Serial.begin(115200);
-    while (!Serial) {
-        ; // Wait for serial port to connect. Needed for native USB port only
-    }
-    Serial.println("Starting...");
+    delay(1000); // Wait for Serial to initialize
+    Serial.println("Serial initialized");
 
     // Setup encoder pins
     pinMode(ENCODER_PIN_A, INPUT_PULLUP);
@@ -50,27 +46,44 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(ENCODER_PIN_A), handleEncoderA, CHANGE);
     attachInterrupt(digitalPinToInterrupt(ENCODER_PIN_B), handleEncoderB, CHANGE);
 
+    gyro = new Gyro();
     Serial.println("Setup complete");
 }
 
 void loop() {
-    // Prevent encoder values from going beyond the limits
-    if (encoderPosition < -100) {
-        encoderPosition = -100;
-    } else if (encoderPosition > 100) {
-        encoderPosition = 100; // Limit to max value of 100
+    gyro->Update();
+    Serial.print("accY: ");
+    Serial.println(gyro->accY);
+
+    if (gyro->accY * (gyro->accY>=0 ? 1 : -1) > MIN_GYRO_THRESHOLD) {
+        if (gyro->accY > 0) {
+            brake.accelerating = true;
+            brake.numActiveLEDs = map(gyro->accY*1000, MIN_GYRO*1000, MAX_GYRO*1000, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(gyro->accY*1000, MIN_GYRO*1000, MAX_GYRO*1000, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+        } else {
+            brake.accelerating = false;
+            brake.numActiveLEDs = map(-gyro->accY*1000, MIN_GYRO*1000, MAX_GYRO*1000, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(-gyro->accY*1000, MIN_GYRO*1000, MAX_GYRO*1000, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+        }
     }
 
-    // Determine if accelerating based on encoder position
-    if (encoderPosition < 0) {
-        brake.accelerating = true;
-        brake.numActiveLEDs = map(-encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
-        brake.active_brightness = map(-encoderPosition, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
-    } else {
-        brake.accelerating = false;
-        brake.numActiveLEDs = map(encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
-        brake.active_brightness = map(encoderPosition, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
-    }
+    // // Prevent encoder values from going beyond the limits
+    // if (encoderPosition < -100) {
+    //     encoderPosition = -100;
+    // } else if (encoderPosition > 100) {
+    //     encoderPosition = 100; // Limit to max value of 100
+    // }
+
+    // // Determine if accelerating based on encoder position
+    // if (encoderPosition < 0) {
+    //     brake.accelerating = true;
+    //     brake.numActiveLEDs = map(-encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
+    //     brake.active_brightness = map(-encoderPosition, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+    // } else {
+    //     brake.accelerating = false;
+    //     brake.numActiveLEDs = map(encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
+    //     brake.active_brightness = map(encoderPosition, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+    // }
 
     // Debounce the encoder click
     bool currentClickState = digitalRead(ENCODER_CLICK_PIN);
@@ -78,7 +91,6 @@ void loop() {
     if (currentClickState == LOW && prevClickState == HIGH) {
         signals.left = !signals.left;
     }
-    
     prevClickState = currentClickState;
     
     brake.Update();

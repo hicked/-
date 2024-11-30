@@ -26,10 +26,11 @@ private:
     unsigned long lastRainbowTime = 0; // time of the last rainbow
     int numLEDs;
     int prevNumActiveLEDs = 0;
+    void SetSolid(CRGB color);
 
 public:
+    
     bool initializedBraking = false; // status of the braking
-    bool initializedEmergencyBraking = false; // status of the emergency 
     byte active_brightness;
     bool accelerating = false;
     int flashCount = 0; // amount of times that the leds need to flash will be reduced by one each time by FlashRedLEDs
@@ -39,6 +40,5 @@ public:
     void Update();
     void FlashRedLEDs();
     void UpdateBrakeLEDs();
-    void SetSolid(CRGB color);
     void MarioStar();
 };
