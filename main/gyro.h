@@ -1,8 +1,8 @@
 #include <Wire.h>
 
-#define MIN_GYRO_ERROR 0.25
-#define MIN_GYRO 0.2
-#define MAX_GYRO 1
+#define MIN_GYRO_ERROR 1500
+#define MIN_GYRO 2000
+#define MAX_GYRO 16000
 /*
     VCC -> 3.3 V / 5 V (better) 
     GND -> GND 

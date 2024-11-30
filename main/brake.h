@@ -2,7 +2,7 @@
 #include <FastLED.h>
 #include "signals.h"
 
-#define BACKLIGHT_COLOR CRGB(0, 1, 0) // Dim green for the background
+#define BACKLIGHT_COLOR CRGB(0, 10, 0) // Dim green for the background
 #define GLOBAL_BRIGHTNESS 255
 #define MIN_BRAKE_BRIGHTNESS 100
 #define MAX_BRAKE_BRIGHTNESS 255

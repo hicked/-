@@ -42,7 +42,7 @@ void Brake::UpdateBrakeLEDs() {
     if (!this->accelerating) {
         for (int i = 0; i < this->numActiveLEDs; i++) {
             int index1 = middleIndex + i;
-            int index2 = middleIndex - i - 1;
+            int index2 = middleIndex - i - 1; 
 
             if (index1 >= 0 && index1 < this->numLEDs && !signals->left) {
                 this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // red brake color

@@ -25,22 +25,22 @@ Gyro::Gyro() {
         Serial.println("Failed to read from MPU");
     }
 
-    if (this->initialAccX/16300.0 > MIN_GYRO_ERROR) {
+    if (this->initialAccX > MIN_GYRO_ERROR) {
         Serial.println("WARNING, X AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
     }
-    if (this->initialAccY/16300.0 > MIN_GYRO_ERROR) {
+    if (this->initialAccY > MIN_GYRO_ERROR) {
         Serial.println("WARNING, Y AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
     }
-    if ((this->initialAccZ/16300.0)-1.0 > MIN_GYRO_ERROR) {
+    if ((this->initialAccZ) > MIN_GYRO_ERROR) {
         Serial.println("WARNING, Z AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
     }
     Serial.println("GYRO SETUP");
     Serial.print("Initial Accel X: ");
-    Serial.println(this->initialAccX/16300.0);
+    Serial.println(this->initialAccX);
     Serial.print("Initial Accel Y: ");
-    Serial.println(this->initialAccY/16300.0);
+    Serial.println(this->initialAccY);
     Serial.print("Initial Accel Z: ");
-    Serial.println(this->initialAccZ/16300.0);
+    Serial.println(this->initialAccZ);
 }
 
 void Gyro::Update() {
@@ -50,9 +50,9 @@ void Gyro::Update() {
     Wire.requestFrom(MPU, 6, true);  // 6 pieces of data cause we dont care about rotational
 
     if (Wire.available() == 6) {
-        this->accX = ((Wire.read() << 8 | Wire.read()) - this->initialAccX)/16300.0;    
-        this->accY = ((Wire.read() << 8 | Wire.read()) - this->initialAccY)/16300.0;  
-        this->accZ = ((Wire.read() << 8 | Wire.read()) - this->initialAccZ)/16300.0;
+        this->accX = ((Wire.read() << 8 | Wire.read()) - this->initialAccX);    
+        this->accY = ((Wire.read() << 8 | Wire.read()) - this->initialAccY);  
+        this->accZ = ((Wire.read() << 8 | Wire.read()) - this->initialAccZ);
     } else {
         Serial.println("Failed to read from MPU");
     }

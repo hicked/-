@@ -58,12 +58,12 @@ void loop() {
     if (gyro->accY * (gyro->accY>=0 ? 1 : -1) > MIN_GYRO) {
         if (gyro->accY > 0) {
             brake.accelerating = true;
-            brake.numActiveLEDs = map(gyro->accY*1000, MIN_GYRO*1000, MAX_GYRO*1000, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(gyro->accY*1000, MIN_GYRO*1000, MAX_GYRO*1000, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+            brake.numActiveLEDs = map(gyro->accY, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(gyro->accY, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
         } else {
             brake.accelerating = false;
-            brake.numActiveLEDs = map(-gyro->accY*1000, MIN_GYRO*1000, MAX_GYRO*1000, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(-gyro->accY*1000, MIN_GYRO*1000, MAX_GYRO*1000, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+            brake.numActiveLEDs = map(-gyro->accY, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(-gyro->accY, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
         }
     }
 
