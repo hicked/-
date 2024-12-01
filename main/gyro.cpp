@@ -58,11 +58,6 @@ void Gyro::Update() {
         return;
     }
 
-    // // Adjust readings by subtracting initial values (caused by gravity)
-    // this->accX -= this->initialAccX;
-    // this->accY -= this->initialAccY;
-    // this->accZ -= this->initialAccZ;
-
     this->smoothedX = SMOOTHING_FACTOR * accX + (1 - SMOOTHING_FACTOR) * smoothedX;
     this->smoothedY = SMOOTHING_FACTOR * accY + (1 - SMOOTHING_FACTOR) * smoothedY;
     this->smoothedZ = SMOOTHING_FACTOR * accZ + (1 - SMOOTHING_FACTOR) * smoothedZ;
