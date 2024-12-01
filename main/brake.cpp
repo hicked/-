@@ -9,7 +9,8 @@ Brake::Brake(Signals* signal, CRGB *leds, int num_leds) {
 void Brake::Update() {
     this->SetSolid(BACKLIGHT_COLOR);
      if (!this->accelerating) {
-        if (this->prevNumActiveLEDs <= INITIAL_BRAKE_THRESHHOLD && this->numActiveLEDs > INITIAL_BRAKE_THRESHHOLD) {
+        if (this->prevNumActiveLEDs <= INITIAL_BRAKE_THRESHOLD && this->numActiveLEDs > INITIAL_BRAKE_THRESHOLD && millis() - this->timeSinceLastIniBraking > TIME_BETWEEN_INI_BRAKE) {
+            timeSinceLastIniBraking = millis();
             flashCount = INITIALIZE_BRAKING_FLASH_LENGTH;
         }
         else if (this->numActiveLEDs > EMERGENCY_BRAKING_THRESHOLD && flashCount == 0) {

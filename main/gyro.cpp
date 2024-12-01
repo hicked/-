@@ -1,9 +1,9 @@
 #include "gyro.h"
 #include <Arduino.h>
+#include <math.h>
 
 // SDA = A4
 // SCL = A5
-
 
 Gyro::Gyro() {
     Wire.begin();
@@ -25,14 +25,14 @@ Gyro::Gyro() {
         Serial.println("Failed to read from MPU");
     }
 
-    if (this->initialAccX > MIN_GYRO_ERROR) {
-        Serial.println("WARNING, X AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
+    if (abs(this->initialAccX - plannedAccX) > MIN_GYRO_ERROR) {
+        Serial.println("WARNING, X AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACCURATE");
     }
-    if (this->initialAccY > MIN_GYRO_ERROR) {
-        Serial.println("WARNING, Y AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
+    if (abs(this->initialAccY) > MIN_GYRO_ERROR) {
+        Serial.println("WARNING, Y AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACCURATE");
     }
-    if ((this->initialAccZ) > MIN_GYRO_ERROR) {
-        Serial.println("WARNING, Z AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACURATE");
+    if (abs(this->initialAccZ - plannedAccZ) > MIN_GYRO_ERROR) {
+        Serial.println("WARNING, Z AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACCURATE");
     }
     Serial.println("GYRO SETUP");
     Serial.print("Initial Accel X: ");
@@ -50,10 +50,20 @@ void Gyro::Update() {
     Wire.requestFrom(MPU, 6, true);  // 6 pieces of data cause we dont care about rotational
 
     if (Wire.available() == 6) {
-        this->accX = ((Wire.read() << 8 | Wire.read()) - this->initialAccX);    
-        this->accY = ((Wire.read() << 8 | Wire.read()) - this->initialAccY);  
-        this->accZ = ((Wire.read() << 8 | Wire.read()) - this->initialAccZ);
+        this->accX = Wire.read() << 8 | Wire.read();    
+        this->accY = Wire.read() << 8 | Wire.read();  
+        this->accZ = Wire.read() << 8 | Wire.read();
     } else {
         Serial.println("Failed to read from MPU");
+        return;
     }
+
+    // // Adjust readings by subtracting initial values (caused by gravity)
+    // this->accX -= this->initialAccX;
+    // this->accY -= this->initialAccY;
+    // this->accZ -= this->initialAccZ;
+
+    this->smoothedX = SMOOTHING_FACTOR * accX + (1 - SMOOTHING_FACTOR) * smoothedX;
+    this->smoothedY = SMOOTHING_FACTOR * accY + (1 - SMOOTHING_FACTOR) * smoothedY;
+    this->smoothedZ = SMOOTHING_FACTOR * accZ + (1 - SMOOTHING_FACTOR) * smoothedZ;
 }

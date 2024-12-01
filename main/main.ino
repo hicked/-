@@ -52,18 +52,19 @@ void setup() {
 
 void loop() {
     gyro->Update();
-    Serial.print("accY: ");
-    Serial.println(gyro->accY);
+    Serial.print("acc: ");
+    Serial.println(gyro->smoothedY);
 
-    if (gyro->accY * (gyro->accY>=0 ? 1 : -1) > MIN_GYRO) {
-        if (gyro->accY > 0) {
+    if (gyro->smoothedY * gyro->smoothedY > 0 ? 1 : -1 > MIN_GYRO) {
+        if (gyro->smoothedY > 0) {
             brake.accelerating = true;
-            brake.numActiveLEDs = map(gyro->accY, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(gyro->accY, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+            brake.numActiveLEDs = map(gyro->smoothedY, MIN_GYRO, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(gyro->smoothedY, MIN_GYRO, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
         } else {
+            Serial.println("CAC");
             brake.accelerating = false;
-            brake.numActiveLEDs = map(-gyro->accY, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(-gyro->accY, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+            brake.numActiveLEDs = map(-(gyro->smoothedY), MIN_GYRO, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(-(gyro->smoothedY), MIN_GYRO, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
         }
     }
 
@@ -95,7 +96,7 @@ void loop() {
     
     brake.Update();
     signals.Update();
-    if (SHOW_MARIO && brake.accelerating && brake.numActiveLEDs > MARIO_STAR_THRESHHOLD) {
+    if (SHOW_MARIO && brake.accelerating && brake.numActiveLEDs > MARIO_STAR_THRESHOLD) {
         brake.MarioStar();
     }
     else if (brake.flashCount == 0) {
