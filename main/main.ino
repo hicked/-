@@ -3,9 +3,11 @@
 #include "signals.h"
 #include "gyro.h"
 
-#define LED_DATA_PIN 7
+#define MOSFET_PIN 6
+#define LED_DATA_PIN_1 4
+#define LED_DATA_PIN_2 5
 #define NUM_LEDS 66
-#define LED_TYPE WS2812B
+#define LED_TYPE WS2815
 #define GLOBAL_BRIGHTNESS 255
 
 // Encoder configuration
@@ -27,7 +29,8 @@ Brake brake(&signals, leds, NUM_LEDS);
 Gyro* gyro;
 
 void setup() {
-    FastLED.addLeds<LED_TYPE, LED_DATA_PIN, RGB>(leds, NUM_LEDS);
+    FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, RGB>(leds, NUM_LEDS);
+    FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, RGB>(leds, NUM_LEDS);
     FastLED.clear();
     FastLED.setBrightness(GLOBAL_BRIGHTNESS);
     FastLED.show();
@@ -47,6 +50,8 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(ENCODER_PIN_B), handleEncoderB, CHANGE);
 
     gyro = new Gyro();
+    pinMode(MOSFET_PIN, OUTPUT);
+    digitalWrite(MOSFET_PIN, HIGH);
     Serial.println("Setup complete");
 }
 
@@ -61,7 +66,6 @@ void loop() {
             brake.numActiveLEDs = map(gyro->smoothedY, MIN_GYRO, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
             brake.active_brightness = map(gyro->smoothedY, MIN_GYRO, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
         } else {
-            Serial.println("CAC");
             brake.accelerating = false;
             brake.numActiveLEDs = map(-(gyro->smoothedY), MIN_GYRO, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
             brake.active_brightness = map(-(gyro->smoothedY), MIN_GYRO, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);

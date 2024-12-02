@@ -29,7 +29,7 @@ void Brake::FlashRedLEDs() {
         this->flashON = !this->flashON;
 
         if (this->flashON) {
-            this->SetSolid(CRGB(0, 255, 0)); // Flash red
+            this->SetSolid(CRGB(255, 0, 0)); // Flash red
             this->flashCount--;
         } else {
             this->SetSolid(BACKLIGHT_COLOR); // Reset to background
@@ -46,10 +46,10 @@ void Brake::UpdateBrakeLEDs() {
             int index2 = middleIndex - i - 1; 
 
             if (index1 >= 0 && index1 < this->numLEDs && !signals->left) {
-                this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // red brake color
+                this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // red brake color
             }
             if (index2 >= 0 && index2 < this->numLEDs && !signals->right) {
-                this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
+                this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
             }
         }
     } else if (this->accelerating && SHOW_ACCEL) {
@@ -57,10 +57,10 @@ void Brake::UpdateBrakeLEDs() {
             int index1 = middleIndex + i;
             int index2 = middleIndex - i - 1;
             if (index1 >= 0 && index1 < this->numLEDs && !signals->left) {
-                this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // Green brake color
+                this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // Green brake color
             }
             if (index2 >= 0 && index2 < this->numLEDs && !signals->right) {
-                this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
+                this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
             }
         }
     }

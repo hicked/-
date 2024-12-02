@@ -1,11 +1,12 @@
 #include <Wire.h>
 
 #define MIN_GYRO_ERROR 1500
+
 #define MIN_GYRO 2000 // buffer area where gyro wont do anything
-#define MAX_GYRO_BREAKING 15000
+#define MAX_GYRO_BREAKING 15000 // divide by around 1600 to get the acceleration in gs
 #define MAX_GYRO_ACCELERATING 10000
-#define NUM_READINGS_SMOOTHING 25
-#define SMOOTHING_FACTOR 0.05 //lower value is more smoothing, less vibrations, less reactive/fast
+
+#define SMOOTHING_FACTOR 0.04 //lower value is more smoothing, less vibrations, less reactive/fast
 /*
     VCC -> 3.3 V / 5 V (better) 
     GND -> GND 
