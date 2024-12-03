@@ -29,7 +29,7 @@ void Brake::FlashRedLEDs() {
         this->flashON = !this->flashON;
 
         if (this->flashON) {
-            this->SetSolid(CRGB(255, 0, 0)); // Flash red
+            this->SetSolid(CRGB(MAX_BRAKE_BRIGHTNESS, 0, 0)); // Flash red
             this->flashCount--;
         } else {
             this->SetSolid(BACKLIGHT_COLOR); // Reset to background
@@ -72,10 +72,11 @@ void Brake::SetSolid(CRGB color) {
 
 void Brake::MarioStar() {
     unsigned long currentMillis = millis();
-    if (currentMillis - this->lastRainbowTime >= 10) { // Update every 50ms
+    if (currentMillis - this->lastRainbowTime >= 5) { // Update every 10ms
         this->lastRainbowTime = currentMillis;
         for (int i = 0; i < this->numLEDs; i++) {
-            this->LEDStrip[i] = CHSV((i * 256 / this->numLEDs + currentMillis / 10) % 256, 255, 255);
+            this->LEDStrip[i] = CHSV(hue + (i * 5), 255, MAX_BRAKE_BRIGHTNESS);
         }
+        this->hue++;
     }
 }
