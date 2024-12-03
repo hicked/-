@@ -2,10 +2,10 @@
 #include <FastLED.h>
 #include "signals.h"
 
-#define BACKLIGHT_COLOR CRGB(1, 0, 0) // Dim red for the background
+#define BACKLIGHT_COLOR CRGB(20, 0, 0) // Dim red for the background
 #define GLOBAL_BRIGHTNESS 100
-#define MIN_BRAKE_BRIGHTNESS 10
-#define MAX_BRAKE_BRIGHTNESS 20
+#define MIN_BRAKE_BRIGHTNESS 150
+#define MAX_BRAKE_BRIGHTNESS 255
 #define FLASH_DELAY 25
 #define INITIALIZE_BRAKING_FLASH_LENGTH 7 // number of flashes
 #define EMERGENCY_BRAKING_THRESHOLD 32 // note this is number of LEDs FROM THE CENTER
@@ -25,7 +25,6 @@ private:
     unsigned long lastFlashTime = 0; // time of the last flash
     unsigned long lastRainbowTime = 0; // time of the last rainbow
     int numLEDs;
-    uint8_t hue = 0;
     int prevNumActiveLEDs = 0;
     void SetSolid(CRGB color);
     unsigned long timeSinceLastIniBraking = 0;
