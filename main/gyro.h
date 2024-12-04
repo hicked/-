@@ -1,12 +1,14 @@
 #include <Wire.h>
 
-#define MIN_GYRO_ERROR 1500
+#define MIN_GYRO_ERROR 1000
 
-#define MIN_GYRO 2000 // buffer area where gyro wont do anything
-#define MAX_GYRO_BREAKING 15000 // divide by around 1600 to get the acceleration in gs
-#define MAX_GYRO_ACCELERATING 10000
+#define MIN_GYRO_BREAKING 2000 // buffer area where gyro wont do anything
+#define MIN_GYRO_ACCELERATING 1000 // buffer area where gyro wont do anything
 
-#define SMOOTHING_FACTOR 0.04 //lower value is more smoothing, less vibrations, less reactive/fast
+#define MAX_GYRO_BREAKING 13000 // divide by around 1600 to get the acceleration in gs
+#define MAX_GYRO_ACCELERATING 7000
+
+#define SMOOTHING_FACTOR 0.04 // lower value is more smoothing, less vibrations, but less reactive/fast
 /*
     VCC -> 3.3 V / 5 V (better) 
     GND -> GND 
@@ -28,9 +30,8 @@ private:
     float plannedAccY = 0.0;
     float plannedAccZ = 1600.0;
 
-    float initialAccX = 0.0;
-    float initialAccY = 0.0;
-    float initialAccZ = 0.0;
+    // gonna have to do sm weird 3d vector algebra to be able to figure out if were going uphill, aka
+    // disregard the gravitational component of the acceleration that is measured. same can be done for lean angle
 
 public:
     float accX; // left and right

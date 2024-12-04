@@ -3,14 +3,18 @@
 #include "signals.h"
 
 #define BACKLIGHT_COLOR CRGB(20, 0, 0) // Dim red for the background
-#define GLOBAL_BRIGHTNESS 100
+#define GLOBAL_BRIGHTNESS 255
+
 #define MIN_BRAKE_BRIGHTNESS 150
 #define MAX_BRAKE_BRIGHTNESS 255
-#define FLASH_DELAY 25
+
+#define FLASH_DELAY 25 // delay between flashes in ms
 #define INITIALIZE_BRAKING_FLASH_LENGTH 7 // number of flashes
+
 #define EMERGENCY_BRAKING_THRESHOLD 32 // note this is number of LEDs FROM THE CENTER
 #define MARIO_STAR_THRESHOLD 32
 #define INITIAL_BRAKE_THRESHOLD 0 // note this is number of LEDs FROM THE CENTER
+
 #define TIME_BETWEEN_INI_BRAKE 3000 // cant continuously initialize braking if gyro is acting up
 #define SHOW_ACCEL true
 #define SHOW_MARIO true
@@ -28,8 +32,8 @@ private:
     int prevNumActiveLEDs = 0;
     void SetSolid(CRGB color);
     unsigned long timeSinceLastIniBraking = 0;
+
 public:
-    
     bool initializedBraking = false; // status of the braking
     byte active_brightness;
     bool accelerating = false;

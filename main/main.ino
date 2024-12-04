@@ -60,15 +60,15 @@ void loop() {
     Serial.print("acc: ");
     Serial.println(gyro->smoothedY);
 
-    if (gyro->smoothedY * gyro->smoothedY > 0 ? 1 : -1 > MIN_GYRO) {
+    if (gyro->smoothedY * gyro->smoothedY > 0 ? 1 : -1 > MIN_GYRO_ACCELERATING && gyro->smoothedY * gyro->smoothedY < 0 ? 1 : -1 < MAX_GYRO_BREAKING) {
         if (gyro->smoothedY > 0) {
             brake.accelerating = true;
-            brake.numActiveLEDs = map(gyro->smoothedY, MIN_GYRO, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(gyro->smoothedY, MIN_GYRO, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+            brake.numActiveLEDs = map(gyro->smoothedY, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(gyro->smoothedY, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
         } else {
             brake.accelerating = false;
-            brake.numActiveLEDs = map(-(gyro->smoothedY), MIN_GYRO, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(-(gyro->smoothedY), MIN_GYRO, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+            brake.numActiveLEDs = map(-(gyro->smoothedY), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(-(gyro->smoothedY), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
         }
     }
 
