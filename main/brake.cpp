@@ -71,11 +71,19 @@ void Brake::SetSolid(CRGB color) {
 }
 
 void Brake::MarioStar() {
+    static int position = 0; // Tracks the current position of the marquee
     unsigned long currentMillis = millis();
-    if (currentMillis - this->lastRainbowTime >= 10) { // Update every 10ms
+
+    if (currentMillis - this->lastRainbowTime >= 10) { 
         this->lastRainbowTime = currentMillis;
+
+        // Clear all LEDs first (optional but ensures clean transitions)
+        fill_solid(this->LEDStrip, this->numLEDs, CRGB::Black);
         for (int i = 0; i < this->numLEDs; i++) {
-            this->LEDStrip[i] = CHSV((i * 256 / this->numLEDs + currentMillis / 10) % 256, 255, MAX_BRAKE_BRIGHTNESS);
+            // Calculate the position of the lit LED in the marquee
+            int ledPosition = (position + i) % this->numLEDs;
+            this->LEDStrip[ledPosition] = CHSV((i * 256 / this->numLEDs + currentMillis / 10) % 256, 255, MAX_BRAKE_BRIGHTNESS);
         }
+        position = (position + 1) % this->numLEDs;
     }
 }

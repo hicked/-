@@ -18,29 +18,10 @@ Gyro::Gyro() {
     Wire.requestFrom(MPU, 6, true);  // 6 pieces of data cause we dont care about rotational
 
     if (Wire.available() == 6) {
-        this->initialAccX = Wire.read() << 8 | Wire.read();    
-        this->initialAccY = Wire.read() << 8 | Wire.read();  
-        this->initialAccZ = Wire.read() << 8 | Wire.read();
+        Serial.println("Connected to Gyro");
     } else {
         Serial.println("Failed to read from MPU");
     }
-
-    if (abs(this->initialAccX - plannedAccX) > MIN_GYRO_ERROR) {
-        Serial.println("WARNING, X AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACCURATE");
-    }
-    if (abs(this->initialAccY) > MIN_GYRO_ERROR) {
-        Serial.println("WARNING, Y AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACCURATE");
-    }
-    if (abs(this->initialAccZ - plannedAccZ) > MIN_GYRO_ERROR) {
-        Serial.println("WARNING, Z AXIS OF GYRO NOT SETUP PROPERLY, RESULTS MAY NOT BE ACCURATE");
-    }
-    Serial.println("GYRO SETUP");
-    Serial.print("Initial Accel X: ");
-    Serial.println(this->initialAccX);
-    Serial.print("Initial Accel Y: ");
-    Serial.println(this->initialAccY);
-    Serial.print("Initial Accel Z: ");
-    Serial.println(this->initialAccZ);
 }
 
 void Gyro::Update() {
@@ -50,15 +31,27 @@ void Gyro::Update() {
     Wire.requestFrom(MPU, 6, true);  // 6 pieces of data cause we dont care about rotational
 
     if (Wire.available() == 6) {
-        this->accX = Wire.read() << 8 | Wire.read();    
-        this->accY = Wire.read() << 8 | Wire.read();  
-        this->accZ = Wire.read() << 8 | Wire.read();
+        this->measuredAccX = Wire.read() << 8 | Wire.read();    
+        this->measuredAccY = Wire.read() << 8 | Wire.read();  
+        this->measuredAccZ = Wire.read() << 8 | Wire.read();
     } else {
         Serial.println("Failed to read from MPU");
         return;
     }
+    this->correctedAcc = this->correctAcc(this->measuredAccX, this->measuredAccY, this->measuredAccZ);
+    this->smoothedAcc = this->smoothedAcc * (1 - SMOOTHING_FACTOR) + this->correctedAcc * SMOOTHING_FACTOR;
+}
 
-    this->smoothedX = SMOOTHING_FACTOR * accX + (1 - SMOOTHING_FACTOR) * smoothedX;
-    this->smoothedY = SMOOTHING_FACTOR * accY + (1 - SMOOTHING_FACTOR) * smoothedY;
-    this->smoothedZ = SMOOTHING_FACTOR * accZ + (1 - SMOOTHING_FACTOR) * smoothedZ;
+
+float Gyro::correctAcc(float accX, float accY, float accZ) {
+    // Normalize the deviations to determine the lean angle effect
+    float magnitude = sqrt(accX * accX + accY * accY + accZ * accZ);
+    
+    // Assume that the lean angle correction affects primarily the X-axis
+    // Adjust as needed based on motorcycle dynamics
+    float lean_correction = acos(accZ / magnitude);  // Angle between Z-axis and gravity vector
+    
+    // Adjust acceleration based on lean
+    float corrected_acc = accY / cos(lean_correction);  // Y-axis is most likely to reflect true acceleration
+    return corrected_acc;
 }

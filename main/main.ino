@@ -57,18 +57,26 @@ void setup() {
 
 void loop() {
     gyro->Update();
-    Serial.print("acc: ");
-    Serial.println(gyro->smoothedY);
+    Serial.print("X: ");
+    Serial.print(gyro->measuredAccX);
+    Serial.print(" | Y: ");
+    Serial.print(gyro->measuredAccY);
+    Serial.print(" | Z: ");
+    Serial.println(gyro->measuredAccZ);
+    Serial.print("Corrected: ");
+    Serial.print(gyro->correctedAcc);
+    Serial.print(" | Smoothed: ");
+    Serial.println(gyro->smoothedAcc);dd
 
-    if (gyro->smoothedY * gyro->smoothedY > 0 ? 1 : -1 > MIN_GYRO_ACCELERATING && gyro->smoothedY * gyro->smoothedY < 0 ? 1 : -1 < MAX_GYRO_BREAKING) {
-        if (gyro->smoothedY > 0) {
+    if (gyro->smoothedAcc * gyro->smoothedAcc > 0 ? 1 : -1 > MIN_GYRO_ACCELERATING && gyro->smoothedAcc * gyro->smoothedAcc < 0 ? 1 : -1 < MAX_GYRO_BREAKING) {
+        if (gyro->smoothedAcc > 0) {
             brake.accelerating = true;
-            brake.numActiveLEDs = map(gyro->smoothedY, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(gyro->smoothedY, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+            brake.numActiveLEDs = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
         } else {
             brake.accelerating = false;
-            brake.numActiveLEDs = map(-(gyro->smoothedY), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(-(gyro->smoothedY), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+            brake.numActiveLEDs = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
+            brake.active_brightness = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
         }
     }
 
