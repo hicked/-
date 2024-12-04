@@ -66,40 +66,20 @@ void loop() {
     Serial.print("Corrected: ");
     Serial.print(gyro->correctedAcc);
     Serial.print(" | Smoothed: ");
-    Serial.println(gyro->smoothedAcc);dd
+    Serial.println(gyro->smoothedAcc);
 
-    if (gyro->smoothedAcc * gyro->smoothedAcc > 0 ? 1 : -1 > MIN_GYRO_ACCELERATING && gyro->smoothedAcc * gyro->smoothedAcc < 0 ? 1 : -1 < MAX_GYRO_BREAKING) {
-        if (gyro->smoothedAcc > 0) {
-            brake.accelerating = true;
-            brake.numActiveLEDs = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
-        } else {
-            brake.accelerating = false;
-            brake.numActiveLEDs = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
-            brake.active_brightness = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
-        }
+    if (gyro->measuredAccY > 0) { // accelerating
+        brake.accelerating = true;
+        brake.numActiveLEDs = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
+        brake.active_brightness = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+    } else { // breaking
+        brake.accelerating = false;
+        brake.numActiveLEDs = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
+        brake.active_brightness = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
     }
 
-    // // Prevent encoder values from going beyond the limits
-    // if (encoderPosition < -100) {
-    //     encoderPosition = -100;
-    // } else if (encoderPosition > 100) {
-    //     encoderPosition = 100; // Limit to max value of 100
-    // }
-
-    // // Determine if accelerating based on encoder position
-    // if (encoderPosition < 0) {
-    //     brake.accelerating = true;
-    //     brake.numActiveLEDs = map(-encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
-    //     brake.active_brightness = map(-encoderPosition, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
-    // } else {
-    //     brake.accelerating = false;
-    //     brake.numActiveLEDs = map(encoderPosition, MIN_GYRO, MAX_GYRO, 0, NUM_LEDS / 2);
-    //     brake.active_brightness = map(encoderPosition, MIN_GYRO, MAX_GYRO, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
-    // }
-
     // Debounce the encoder click
-    bool currentClickState = digitalRead(ENCODER_CLICK_PIN);
+    bool currentClickState = digitalRead(ENCODER_CLICK_PIN); // signals, to be implemented later this is for testing
 
     if (currentClickState == LOW && prevClickState == HIGH) {
         signals.left = !signals.left;

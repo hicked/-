@@ -38,20 +38,10 @@ void Gyro::Update() {
         Serial.println("Failed to read from MPU");
         return;
     }
-    this->correctedAcc = this->correctAcc(this->measuredAccX, this->measuredAccY, this->measuredAccZ);
+
+    // The logic here, is that any under circumstance (leaning, uphill, downhill, etc) total magnitude of acceleration should be 1g or 16384
+    // So we can just subtract 16384 from the total magnitude of acceleration to get the corrected acceleration based on only the motorcycle's acceleration
+    // There are still some issues like the momentary acceleration caused by bumps, but thats what the smoothing is for
+    this->correctedAcc = sqrt(this->measuredAccX*this->measuredAccX, this->measuredAccY*this->measuredAccY, this->measuredAccZ*this->measuredAccZ) - EXPECTED_ACC_Z;
     this->smoothedAcc = this->smoothedAcc * (1 - SMOOTHING_FACTOR) + this->correctedAcc * SMOOTHING_FACTOR;
-}
-
-
-float Gyro::correctAcc(float accX, float accY, float accZ) {
-    // Normalize the deviations to determine the lean angle effect
-    float magnitude = sqrt(accX * accX + accY * accY + accZ * accZ);
-    
-    // Assume that the lean angle correction affects primarily the X-axis
-    // Adjust as needed based on motorcycle dynamics
-    float lean_correction = acos(accZ / magnitude);  // Angle between Z-axis and gravity vector
-    
-    // Adjust acceleration based on lean
-    float corrected_acc = accY / cos(lean_correction);  // Y-axis is most likely to reflect true acceleration
-    return corrected_acc;
 }

@@ -37,5 +37,4 @@ public:
 
     Gyro();
     void Update();
-    float correctAcc(float accX, float accY, float accZ);
 };
