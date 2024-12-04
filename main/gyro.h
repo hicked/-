@@ -31,9 +31,9 @@ public:
     float measuredAccY; // forward+ backwards- (ASSUMING BOARD IS FACING UP)
     float measuredAccZ; // up and down
 
-    float correctedAcc;
+    float correctedAcc; // disregarding gravity
 
-    float smoothedAcc = 0.0;
+    float smoothedAcc = 0.0; // smoothed out acceleration for dealing with bumps and irregularities
 
     Gyro();
     void Update();
