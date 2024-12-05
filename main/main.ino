@@ -24,9 +24,9 @@ unsigned long debounceDelay = 50;
 
 CRGB leds[NUM_LEDS];
 
+Gyro *gyro;
+Brake *brake;
 Signals signals(leds, NUM_LEDS);
-Brake brake(&signals, leds, NUM_LEDS);
-Gyro* gyro;
 
 void setup() {
     FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, RGB>(leds, NUM_LEDS);
@@ -37,7 +37,6 @@ void setup() {
 
     // Initialize Serial for debugging
     Serial.begin(115200);
-    delay(1000); // Wait for Serial to initialize
     Serial.println("Serial initialized");
 
     // Setup encoder pins
@@ -50,6 +49,8 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(ENCODER_PIN_B), handleEncoderB, CHANGE);
 
     gyro = new Gyro();
+    brake = new Brake(&signals, leds, gyro, NUM_LEDS);
+
     pinMode(MOSFET_PIN, OUTPUT);
     digitalWrite(MOSFET_PIN, HIGH);
     Serial.println("Setup complete");
@@ -57,25 +58,25 @@ void setup() {
 
 void loop() {
     gyro->Update();
-    Serial.print("X: ");
-    Serial.print(gyro->measuredAccX);
-    Serial.print(" | Y: ");
-    Serial.print(gyro->measuredAccY);
-    Serial.print(" | Z: ");
-    Serial.println(gyro->measuredAccZ);
-    Serial.print("Corrected: ");
-    Serial.print(gyro->correctedAcc);
-    Serial.print(" | Smoothed: ");
-    Serial.println(gyro->smoothedAcc);
+    // Serial.print("X: ");
+    // Serial.print(gyro->measuredAccX);
+    // Serial.print(" | Y: ");
+    // Serial.print(gyro->measuredAccY);
+    // Serial.print(" | Z: ");
+    // Serial.println(gyro->measuredAccZ);
+    if (sqrt(gyro->correctedAcc*gyro->correctedAcc) > 1000) {
+        Serial.print("Corrected: ");
+        Serial.println(gyro->measuredAccY);
+    }
+    // Serial.print(" | Smoothed: ");
+    // Serial.println(gyro->smoothedAcc);
 
-    if (gyro->measuredAccY > 0) { // accelerating
-        brake.accelerating = true;
-        brake.numActiveLEDs = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
-        brake.active_brightness = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+    if (gyro->accelerating) { // accelerating
+        brake->numActiveLEDs = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
+        brake->active_brightness = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
     } else { // breaking
-        brake.accelerating = false;
-        brake.numActiveLEDs = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
-        brake.active_brightness = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+        brake->numActiveLEDs = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
+        brake->active_brightness = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
     }
 
     // Debounce the encoder click
@@ -86,17 +87,17 @@ void loop() {
     }
     prevClickState = currentClickState;
     
-    brake.Update();
+    brake->Update();
     signals.Update();
-    if (SHOW_MARIO && brake.accelerating && brake.numActiveLEDs > MARIO_STAR_THRESHOLD) {
-        brake.MarioStar();
+    if (SHOW_MARIO && gyro->accelerating && brake->numActiveLEDs > MARIO_STAR_THRESHOLD) {
+        brake->MarioStar();
     }
-    else if (brake.flashCount == 0) {
-        brake.UpdateBrakeLEDs();
+    else if (brake->flashCount == 0) {
+        brake->UpdateBrakeLEDs();
         signals.UpdateSignals();
     }  
     else { // handled outside brake.update() since we want it to go OVER the turn signals
-        brake.FlashRedLEDs();
+        brake->FlashRedLEDs();
     }
     FastLED.show();
 

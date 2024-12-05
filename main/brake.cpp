@@ -1,14 +1,15 @@
 #include "Brake.h"
 
-Brake::Brake(Signals* signal, CRGB *leds, int num_leds) {
+Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, int num_leds) {
     this->LEDStrip = leds;
     this->numLEDs = num_leds;
     this->signals = signal;
+    this->gyro = gyro;
 }
 
 void Brake::Update() {
     this->SetSolid(BACKLIGHT_COLOR);
-     if (!this->accelerating) {
+     if (!gyro->accelerating) {
         if (this->prevNumActiveLEDs <= INITIAL_BRAKE_THRESHOLD && this->numActiveLEDs > INITIAL_BRAKE_THRESHOLD && millis() - this->timeSinceLastIniBraking > TIME_BETWEEN_INI_BRAKE) {
             timeSinceLastIniBraking = millis();
             flashCount = INITIALIZE_BRAKING_FLASH_LENGTH;
@@ -40,7 +41,7 @@ void Brake::FlashRedLEDs() {
 void Brake::UpdateBrakeLEDs() {
     int middleIndex = this->numLEDs / 2;
 
-    if (!this->accelerating) {
+    if (!gyro->accelerating) {
         for (int i = 0; i < this->numActiveLEDs; i++) {
             int index1 = middleIndex + i;
             int index2 = middleIndex - i - 1; 
@@ -52,10 +53,11 @@ void Brake::UpdateBrakeLEDs() {
                 this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
             }
         }
-    } else if (this->accelerating && SHOW_ACCEL) {
+    } else if (gyro->accelerating && SHOW_ACCEL) {
         for (int i = 0; i < this->numActiveLEDs; i++) {
             int index1 = middleIndex + i;
             int index2 = middleIndex - i - 1;
+            
             if (index1 >= 0 && index1 < this->numLEDs && !signals->left) {
                 this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // Green brake color
             }

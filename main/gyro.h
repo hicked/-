@@ -1,14 +1,14 @@
+#pragma once
 #include <Wire.h>
 
+// divide all these values by 16384 to get the amount in g force
 #define MIN_GYRO_BREAKING 2000 // buffer area where gyro wont do anything
-#define MAX_GYRO_BREAKING 13000 // divide by around 1600 to get the acceleration in gs
+#define MAX_GYRO_BREAKING 10000 // divide by around 1600 to get the acceleration in gs
 
-#define MIN_GYRO_ACCELERATING 1000 // buffer area where gyro wont do anything
+#define MIN_GYRO_ACCELERATING 2000 // buffer area where gyro wont do anything
 #define MAX_GYRO_ACCELERATING 7000 
 
-#define EXPECTED_ACC_X 0.0
-#define EXPECTED_ACC_Y 0.0
-#define EXPECTED_ACC_Z 16384.0
+#define EXPECTED_ACC_MAGNITUDE 16384.0
 
 
 #define SMOOTHING_FACTOR 0.1 // lower value is more smoothing, less vibrations, but less reactive/fast
@@ -30,6 +30,8 @@ public:
     float measuredAccX; // left and right
     float measuredAccY; // forward+ backwards- (ASSUMING BOARD IS FACING UP)
     float measuredAccZ; // up and down
+
+    bool accelerating;
 
     float correctedAcc; // disregarding gravity
 

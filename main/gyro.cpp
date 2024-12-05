@@ -42,6 +42,15 @@ void Gyro::Update() {
     // The logic here, is that any under circumstance (leaning, uphill, downhill, etc) total magnitude of acceleration should be 1g or 16384
     // So we can just subtract 16384 from the total magnitude of acceleration to get the corrected acceleration based on only the motorcycle's acceleration
     // There are still some issues like the momentary acceleration caused by bumps, but thats what the smoothing is for
-    this->correctedAcc = sqrt(this->measuredAccX*this->measuredAccX, this->measuredAccY*this->measuredAccY, this->measuredAccZ*this->measuredAccZ) - EXPECTED_ACC_Z;
+    this->correctedAcc = sqrt(this->measuredAccX*this->measuredAccX + this->measuredAccY*this->measuredAccY + this->measuredAccZ*this->measuredAccZ) - EXPECTED_ACC_MAGNITUDE;
+    
+    if (this->measuredAccY < 0) {
+        this->correctedAcc *= -1;
+        this->accelerating = false;
+    }
+    else {
+        this->accelerating = true;
+    }
+    
     this->smoothedAcc = this->smoothedAcc * (1 - SMOOTHING_FACTOR) + this->correctedAcc * SMOOTHING_FACTOR;
 }
