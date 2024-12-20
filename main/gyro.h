@@ -1,14 +1,14 @@
 #pragma once
 #include <Wire.h>
 
-// divide all these values by 16384 to get the amount in g force
+// divide all these values by 16500 to get the amount in g force
 #define MIN_GYRO_BREAKING 2000 // buffer area where gyro wont do anything
-#define MAX_GYRO_BREAKING 10000 // divide by around 1600 to get the acceleration in gs
+#define MAX_GYRO_BREAKING 10000
 
-#define MIN_GYRO_ACCELERATING 2000 // buffer area where gyro wont do anything
-#define MAX_GYRO_ACCELERATING 7000 
+#define MIN_GYRO_ACCELERATING 1500 // buffer area where gyro wont do anything
+#define MAX_GYRO_ACCELERATING 5000 
 
-#define EXPECTED_ACC_MAGNITUDE 16384.0
+#define EXPECTED_ACC_MAGNITUDE 16700.0
 
 
 #define SMOOTHING_FACTOR 0.1 // lower value is more smoothing, less vibrations, but less reactive/fast
