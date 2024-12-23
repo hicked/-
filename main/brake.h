@@ -10,7 +10,7 @@
 #define MAX_BRAKE_BRIGHTNESS 255
 
 #define FLASH_DELAY 25 // delay between flashes in ms
-#define INITIALIZE_BRAKING_FLASH_LENGTH 7 // number of flashes
+#define INITIALIZE_BRAKING_FLASH_LENGTH 15 // number of flashes
 
 #define EMERGENCY_BRAKING_THRESHOLD 32 // note this is number of LEDs FROM THE CENTER
 #define MARIO_STAR_THRESHOLD 32

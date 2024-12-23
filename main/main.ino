@@ -56,21 +56,16 @@ void setup() {
     Serial.println("Setup complete");
 }
 
-unsigned long caca = millis();
 
 void loop() {
     gyro->Update();
-
-    if (millis() - caca > 1000) {
-        Serial.println(gyro->smoothedAcc);
-        caca = millis();
-    }
-    // Serial.print("X: ");
-    // Serial.print(gyro->measuredAccX);
-    // Serial.print(" | Y: ");
-    // Serial.print(gyro->measuredAccY);
-    // Serial.print(" | Z: ");
-    // Serial.println(gyro->measuredAccZ);
+    Serial.println(gyro->smoothedAcc * (gyro->accelerating ? 1 : -1));
+    Serial.print("X: ");
+    Serial.print(gyro->measuredAccX);
+    Serial.print(" | Y: ");
+    Serial.print(gyro->measuredAccY);
+    Serial.print(" | Z: ");
+    Serial.println(gyro->measuredAccZ);
     //if (sqrt(gyro->correctedAcc*gyro->correctedAcc) > 1000) {
         //Serial.print("Corrected: ");
     //}
@@ -106,6 +101,7 @@ void loop() {
         brake->FlashRedLEDs();
     }
     FastLED.show();
+    //delay(100);
 
     // Debug output
     // Serial.print("encoderPosition: ");

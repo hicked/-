@@ -15,20 +15,22 @@ Gyro::Gyro() {
     Wire.beginTransmission(MPU);
     Wire.write(0x3B);  
     Wire.endTransmission(false);
-    Wire.requestFrom(MPU, 6, true);  // 6 pieces of data cause we dont care about rotational
+    Wire.requestFrom(MPU, 6, true);  // 6 pieces of data cause we don't care about rotational
 
     if (Wire.available() == 6) {
         Serial.println("Connected to Gyro");
     } else {
         Serial.println("Failed to read from MPU");
     }
+
+    this->lastUpdateTime = millis(); // Initialize the last update time
 }
 
 void Gyro::Update() {
     Wire.beginTransmission(MPU);
     Wire.write(0x3B);  
     Wire.endTransmission(false);
-    Wire.requestFrom(MPU, 6, true);  // 6 pieces of data cause we dont care about rotational
+    Wire.requestFrom(MPU, 6, true);  // 6 pieces of data cause we don't care about rotational
 
     if (Wire.available() == 6) {
         this->measuredAccX = Wire.read() << 8 | Wire.read();    
@@ -39,18 +41,36 @@ void Gyro::Update() {
         return;
     }
 
-    // The logic here, is that any under circumstance (leaning, uphill, downhill, etc) total magnitude of acceleration should be 1g or 16384
-    // So we can just subtract 16384 from the total magnitude of acceleration to get the corrected acceleration based on only the motorcycle's acceleration
-    // There are still some issues like the momentary acceleration caused by bumps, but thats what the smoothing is for
-    this->correctedAcc = sqrt(this->measuredAccX*this->measuredAccX + this->measuredAccY*this->measuredAccY + this->measuredAccZ*this->measuredAccZ) - EXPECTED_ACC_MAGNITUDE;
-    
-    if (this->measuredAccY < 0) {
-        this->correctedAcc *= -1;
-        this->accelerating = false;
+    // Calculate the corrected acceleration
+    this->correctedAcc = sqrt(this->measuredAccX * this->measuredAccX +
+                              this->measuredAccY * this->measuredAccY +
+                              this->measuredAccZ * this->measuredAccZ) - EXPECTED_ACC_MAGNITUDE;
+
+    this->correctedAcc = this->correctedAcc < 0 ? this->correctedAcc * -1 : this->correctedAcc;
+
+    // Check for sudden bumps
+    if (abs(this->correctedAcc - this->prevCorrectedAcc) > BUMP_THRESHOLD) {
+        unsigned long currentTime = millis();
+
+        // Check if the update timeout has elapsed
+        if (currentTime - this->lastUpdateTime > UPDATE_TIMEOUT) {
+            Serial.println("Acceleration update overdue; applying fallback."); // forcing changes
+            // Force an update with the current corrected value
+            this->smoothedAcc = this->smoothedAcc * (1 - SMOOTHING_FACTOR) + this->correctedAcc * SMOOTHING_FACTOR;
+            this->lastUpdateTime = currentTime; // Reset the last update time
+        } else {
+            // Skip the update since its a bump
+            
+            return;
+        }
     }
-    else {
-        this->accelerating = true;
-    }
-    
+
+    this->accelerating = this->measuredAccY >= 0;
+
+    // Smooth the acceleration
     this->smoothedAcc = this->smoothedAcc * (1 - SMOOTHING_FACTOR) + this->correctedAcc * SMOOTHING_FACTOR;
+
+    // Update previous corrected acceleration and timestamp
+    this->prevCorrectedAcc = this->correctedAcc;
+    lastUpdateTime = millis();
 }
