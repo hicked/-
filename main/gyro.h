@@ -1,18 +1,5 @@
 #pragma once
 #include <Wire.h>
-
-// divide all these values by 17050 to get the amount in g force
-#define MIN_GYRO_BREAKING 2000 // buffer area where gyro wont do anything
-#define MAX_GYRO_BREAKING 10000
-
-#define MIN_GYRO_ACCELERATING 1500 // buffer area where gyro wont do anything
-#define MAX_GYRO_ACCELERATING 5000 
-
-#define EXPECTED_ACC_MAGNITUDE 16650.0
-
-#define SMOOTHING_FACTOR 0.1 // lower value is more smoothing, less vibrations, but less reactive/fast
-#define UPDATE_TIMEOUT 100 // Timeout in milliseconds to force an update
-#define BUMP_THRESHOLD 500 // if the acceleration changes by this much, its probably a bump
 /*
     VCC -> 3.3 V / 5 V (better) 
     GND -> GND 
@@ -23,23 +10,71 @@
     TRY TO GET AS FLAT AT POSSIBLE
 */
 
+// divide all these values by 17000 to get the amount in g force
+#define MIN_GYRO_BREAKING 500 // buffer area where gyro wont do anything
+#define MAX_GYRO_BREAKING 5000
+
+#define MIN_GYRO_ACCELERATING 1000 // buffer area where gyro wont do anything
+#define MAX_GYRO_ACCELERATING 5000
+
+#define EXPECTED_ACC_MAGNITUDE 17000.0
+#define CALIBRATION_SAMPLE_SIZE 500 // sample size for calibration phase
+#define CALIBRATION_ACC_DELTA 500 // ensures that the acc found during calibration is within this of EXPECTED_ACC_MAGNITUDE
+
+
+// Filtering and smoothing
+
+// First, it will check the raw value of the acceleration. If this value is too dissimilar from the previous value,
+// the data will be disregarded. It automatically detect errors, overriding bumps if it detects continuous bumps for x amount of time.
+// side note, there is a bug where it gets in an infinite loop if multiple overrides stack. For this reason there is a minimum time between overrides
+#define FILTER_DELTA true
+
+#define BUMP_THRESHOLD 1000 // if the acceleration changes by this much, its probably a bump
+#define SAMPLE_SIZE_BUMPS 20 // if there are this many bumps in a row that are within threshold of each other,
+// its not a bump, so override
+
+#define BUMP_OVERRIDE_TIME 5000 // force an update if bumps are detected for this many millis
+#define MIN_TIME_BETWEEN_OVERRIDES 6000
+
+
+// Secondly, the program takes a sample size of gyro values
+// It will take the average of n data, and calculate the average
+#define FILTER_AVG true
+#define AVG_SAMPLE_SIZE 5
+
+
+// Finaly, it smoothed the previous and new values together instead of just setting them
+#define FILTER_SMOOTHING true
+#define SMOOTHING_FACTOR 0.3 // lower value is more smoothing, less vibrations, but less reactive/fast
+
+
+
 class Gyro {
 private:
     const int MPU = 0x68; // MPU6050 I2C address
-    unsigned long lastUpdateTime = 0;
 
-public:
+    unsigned long lastUpdateTime = 0;
+    unsigned long lastForceUpdate = 0;
+    float idleAcc = 0.0;
+
     float measuredAccX; // left and right
     float measuredAccY; // forward+ backwards- (ASSUMING BOARD IS FACING UP)
     float measuredAccZ; // up and down
 
-    bool accelerating = false;
+    float prevAcc = 0.0; // previous corrected acceleration, used to filter out bumps
 
-    float prevCorrectedAcc = 0.0; // previous corrected acceleration, used to filter out bumps
-    float correctedAcc = 0.0; // disregarding gravity, and sign
+    float minBump = 100000.0;
+    float maxBump = -100000.0;
+    int numBumps = 0;
 
-    float smoothedAcc = 0.0; // smoothed out acceleration for dealing with bumps and irregularities, disregards sign
+    int numSamples = 0;
+    float sumSamples = 0.0;
+    float avgAcc = 0.0;
 
+    float correctedAcc = 0.0; // disregarding idle gravity
+
+public:
+    float smoothedAcc = 0.0; // smoothed out acceleration for dealing with bumps and irregularities, signed
     Gyro();
     void Update();
 };

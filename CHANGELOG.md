@@ -12,6 +12,19 @@ Date is in YYYY/MM/DD format.
 
 **D**: Patch / Very Minor Thing
 
+## [v.1.2.1] - 2024-12-26
+**Author:** Antoine
+-   Gyro logic, including filter, completed.
+    -   Now ignores gravity (calculated during calibration phase on startup)
+    -   filters out big spikes in gyro values
+        -   if bumps are detected for an extending period of time, overrides
+        -   if bumps seem to have a consistent acceleration value, overrides
+    -   filters by taking an average from sample size
+    -   filters by applying smoothing affect to acceleration
+-   Gyro must how only be RELATIVELY flat. 
+-   Gyro must do its calibration with no external acceleration present (not accelerating)
+> Lots of parameters can be changed in the `gyro.h` header file to get more favorable results
+
 
 ## [v.1.1.0] - 2024-11-30
 **Author:** Antoine

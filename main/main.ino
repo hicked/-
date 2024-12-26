@@ -48,35 +48,24 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(ENCODER_PIN_A), handleEncoderA, CHANGE);
     attachInterrupt(digitalPinToInterrupt(ENCODER_PIN_B), handleEncoderB, CHANGE);
 
+    pinMode(MOSFET_PIN, OUTPUT);
+    delay(10);
+    digitalWrite(MOSFET_PIN, HIGH);
+
     gyro = new Gyro();
     brake = new Brake(&signals, leds, gyro, NUM_LEDS);
-
-    pinMode(MOSFET_PIN, OUTPUT);
-    digitalWrite(MOSFET_PIN, HIGH);
     Serial.println("Setup complete");
 }
 
 
 void loop() {
     gyro->Update();
-    Serial.println(gyro->smoothedAcc * (gyro->accelerating ? 1 : -1));
-    Serial.print("X: ");
-    Serial.print(gyro->measuredAccX);
-    Serial.print(" | Y: ");
-    Serial.print(gyro->measuredAccY);
-    Serial.print(" | Z: ");
-    Serial.println(gyro->measuredAccZ);
-    //if (sqrt(gyro->correctedAcc*gyro->correctedAcc) > 1000) {
-        //Serial.print("Corrected: ");
-    //}
-    // Serial.print(" | Smoothed: ");
-    // Serial.println(gyro->smoothedAcc);
 
-    if (gyro->accelerating) { // accelerating
+    if (gyro->smoothedAcc > 0) { // accelerating
         brake->numActiveLEDs = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, NUM_LEDS / 2);
         brake->active_brightness = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
     } else { // breaking
-        brake->numActiveLEDs = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
+        brake->numActiveLEDs = map(abs(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0, NUM_LEDS / 2);
         brake->active_brightness = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
     }
 
@@ -90,7 +79,7 @@ void loop() {
     
     brake->Update();
     signals.Update();
-    if (SHOW_MARIO && gyro->accelerating && brake->numActiveLEDs > MARIO_STAR_THRESHOLD) {
+    if (SHOW_MARIO && gyro->smoothedAcc > 0 && brake->numActiveLEDs > MARIO_STAR_THRESHOLD) {
         brake->MarioStar();
     }
     else if (brake->flashCount == 0) {
@@ -101,7 +90,6 @@ void loop() {
         brake->FlashRedLEDs();
     }
     FastLED.show();
-    //delay(100);
 
     // Debug output
     // Serial.print("encoderPosition: ");

@@ -9,7 +9,7 @@ Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, int num_leds) {
 
 void Brake::Update() {
     this->SetSolid(BACKLIGHT_COLOR);
-     if (!gyro->accelerating) {
+     if (!gyro->smoothedAcc < 0) { // breaking
         if (this->prevNumActiveLEDs <= INITIAL_BRAKE_THRESHOLD && this->numActiveLEDs > INITIAL_BRAKE_THRESHOLD && millis() - this->timeSinceLastIniBraking > TIME_BETWEEN_INI_BRAKE) {
             timeSinceLastIniBraking = millis();
             flashCount = INITIALIZE_BRAKING_FLASH_LENGTH;
@@ -41,7 +41,7 @@ void Brake::FlashRedLEDs() {
 void Brake::UpdateBrakeLEDs() {
     int middleIndex = this->numLEDs / 2;
 
-    if (!gyro->accelerating) {
+    if (gyro->smoothedAcc < 0) { // breaking
         for (int i = 0; i < this->numActiveLEDs; i++) {
             int index1 = middleIndex + i;
             int index2 = middleIndex - i - 1; 
@@ -53,7 +53,7 @@ void Brake::UpdateBrakeLEDs() {
                 this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
             }
         }
-    } else if (gyro->accelerating && SHOW_ACCEL) {
+    } else if (gyro->smoothedAcc > 0 && SHOW_ACCEL) { // Accelerating
         for (int i = 0; i < this->numActiveLEDs; i++) {
             int index1 = middleIndex + i;
             int index2 = middleIndex - i - 1;
