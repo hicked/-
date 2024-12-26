@@ -32,7 +32,6 @@ Date is in YYYY/MM/DD format.
 -   ADDED CONRTOLS BASED ON GYRO Y AXIS
 -   MUST ENSURE THE GYRO LIGHT IS FACING UP, WITH THE PINS ON THE RIGHT SIDE
 -   Issue with brake light, too sensitive, sometimes ini flash will be continuous
--   Added smoothing to gyro for anti vibration
 > ENSURE GYRO IS FLAT. IT WILL PRINT INITIAL VALUES TO LET YOU KNOW
 
 ## [v.1.0.0] - 2024-11-28
