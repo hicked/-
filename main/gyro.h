@@ -61,8 +61,6 @@ private:
     float measuredAccY; // forward+ backwards- (ASSUMING BOARD IS FACING UP)
     float measuredAccZ; // up and down
 
-    float prevAcc = 0.0; // previous corrected acceleration, used to filter out bumps
-
     float minBump = 100000.0;
     float maxBump = -100000.0;
     int numBumps = 0;
@@ -74,6 +72,7 @@ private:
     float correctedAcc = 0.0; // disregarding idle gravity
 
 public:
+    float prevAcc = 0.0; // previous corrected acceleration, used to filter out bumps
     float smoothedAcc = 0.0; // smoothed out acceleration for dealing with bumps and irregularities, signed
     Gyro();
     void Update();

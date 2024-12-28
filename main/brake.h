@@ -17,6 +17,8 @@
 #define INITIAL_BRAKE_THRESHOLD 0 // note this is number of LEDs FROM THE CENTER
 
 #define TIME_BETWEEN_INI_BRAKE 3000 // cant continuously initialize braking if gyro is acting up
+#define CENTER_FLASH_WIDTH 2 // Width of the flashing center part of the brake. should be even
+
 #define SHOW_ACCEL true
 #define SHOW_MARIO true
 
@@ -27,13 +29,19 @@ private:
     CRGB *LEDStrip; // Pointer to the LED strip
     Signals *signals;
     Gyro *gyro;
+
     bool flashON = false; // status while flashing
+    bool centerFlashON = false; // status while center flashing
+
     unsigned long lastFlashTime = 0; // time of the last flash
+    unsigned long lastCenterFlashTime = 0; // time of the last center flash
     unsigned long lastRainbowTime = 0; // time of the last rainbow
+    unsigned long timeSinceLastIniBraking = 0; // time since last initialized braking
+
     int numLEDs;
-    int prevNumActiveLEDs = 0;
+    int middleIndex;
+    
     void SetSolid(CRGB color);
-    unsigned long timeSinceLastIniBraking = 0;
 
 public:
     bool initializedBraking = false; // status of the braking
@@ -44,6 +52,6 @@ public:
     Brake(Signals *signal, CRGB *leds, Gyro *gyro, int num_leds);
     void Update();
     void FlashRedLEDs();
-    void UpdateBrakeLEDs();
     void MarioStar();
+    void FlashCenterLEDs();
 };

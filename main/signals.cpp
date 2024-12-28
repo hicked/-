@@ -6,12 +6,9 @@ Signals::Signals(CRGB *leds, int num_leds) {
 }
 
 void Signals::Update() {
-}
-
-void Signals::UpdateSignals() {
-    unsigned long currentTime = millis();
-    if (currentTime - lastSignalUpdate > SIGNAL_DELAY) {
-        lastSignalUpdate = currentTime;
+    this->UpdateStates();
+    if (millis() - lastSignalUpdate > SIGNAL_DELAY) {
+        lastSignalUpdate = millis();
         if (left) {
             LeftSignal();
         } else if (right) {
@@ -23,28 +20,48 @@ void Signals::UpdateSignals() {
     }
 }
 
+void Signals::UpdateStates() {
+    // Left turn signal
+    if (digitalRead(LEFT_SIGNAL_PIN) == HIGH) {
+        this->left = true;
+        leftLastHighTime = millis();
+    } else if (leftSignalState && (millis() - leftSignalLastHighTime >= SIGNAL_OFF_DELAY)) {
+        this->left = false;
+    }
+
+    // Right turn signal
+    if (digitalRead(RIGHT_SIGNAL_PIN) == HIGH) {
+        this->right = true;
+        rightLastHighTime = millis();
+    } else if (rightSignalState && (millis() - rightSignalLastHighTime >= SIGNAL_OFF_DELAY)) {
+        this->right = false;
+    }
+}
+
 void Signals::RightSignal() {
-    int middleIndex = numLEDs / 2;
+    int startIndex = numLEDs / 2 - (numLEDs / 2 - SIGNAL_LENGTH);
     this->prevNumActiveLEDs++;
-    if (this->prevNumActiveLEDs >= middleIndex) {
+    if (this->prevNumActiveLEDs >= startIndex) {
         SetSolid(BACKLIGHT_COLOR);
         this->prevNumActiveLEDs = 0;
+        return;
     }
-    // for (int i = middleIndex; i >= middleIndex - this->prevNumActiveLEDs; i--) {
-    //     LEDStrip[i] = SIGNAL_COLOUR;
-    // }
-    this->prevNumActiveLEDs++;
-    LEDStrip[this->prevNumActiveLEDs] = SIGNAL_COLOUR;
+    for (int i = startIndex; i >= startIndex - this->prevNumActiveLEDs; i--) {
+        LEDStrip[i] = SIGNAL_COLOUR;
+    }
 }
 
 void Signals::LeftSignal() {
-    int middleIndex = numLEDs / 2;
+    int startIndex = numLEDs / 2 - (numLEDs / 2 - SIGNAL_LENGTH);
     this->prevNumActiveLEDs++;
-    if (this->prevNumActiveLEDs >= middleIndex) {
+
+    // signal is full, reset
+    if (this->prevNumActiveLEDs >= startIndex) {
         SetSolid(BACKLIGHT_COLOR);
         this->prevNumActiveLEDs = 0;
+        return;
     }
-    for (int i = middleIndex; i <= middleIndex + this->prevNumActiveLEDs; i++) {
+    for (int i = startIndex; i <= startIndex + this->prevNumActiveLEDs; i++) {
         LEDStrip[i] = SIGNAL_COLOUR;
     }
 }
