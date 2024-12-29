@@ -6,51 +6,66 @@ Signals::Signals(CRGB *leds, int num_leds) {
 }
 
 void Signals::Update() {
+    unsigned long currentTime = millis();
+
+    this->UpdateStates();
+    if (this->numActiveLEDs < SIGNAL_LENGTH && currentTime - lastSignalUpdate > SIGNAL_SPEED && (this->left || this->right)) {
+        lastSignalUpdate = currentTime;
+        this->numActiveLEDs++;
+    }
+    // pauses when bar is full momentarily
+    else if (this->numActiveLEDs >= SIGNAL_LENGTH && currentTime - lastSignalUpdate > PAUSE_TIME) {
+        lastSignalUpdate = currentTime;
+        this->numActiveLEDs = 0;
+    }
+
+    if (left) {
+        LeftSignal();
+    } 
+    if (right) {
+        RightSignal();
+    }
+    if (!right && !left) {
+        this->numActiveLEDs = 0;
+    }
 }
 
-void Signals::UpdateSignals() {
-    unsigned long currentTime = millis();
-    if (currentTime - lastSignalUpdate > SIGNAL_DELAY) {
-        lastSignalUpdate = currentTime;
-        if (left) {
-            LeftSignal();
-        } else if (right) {
-            RightSignal();
-        }
-        else {
-            this->prevNumActiveLEDs = 0;
-        }
+void Signals::UpdateStates() {
+    // Left turn signal
+    if (!digitalRead(LEFT_SIGNAL_PIN) == HIGH) {
+        this->left = true;
+        leftLastHighTime = millis();
+    } else if (this->left && (millis() - leftLastHighTime >= SIGNAL_OFF_DELAY)) {
+        this->left = false;
+    }
+
+    // Right turn signal
+    if (!digitalRead(RIGHT_SIGNAL_PIN) == HIGH) {
+        this->right = true;
+        rightLastHighTime = millis();
+    } else if (this->right && (millis() - rightLastHighTime >= SIGNAL_OFF_DELAY)) {
+        this->right = false;
     }
 }
 
 void Signals::RightSignal() {
-    int middleIndex = numLEDs / 2;
-    this->prevNumActiveLEDs++;
-    if (this->prevNumActiveLEDs >= middleIndex) {
-        SetSolid(BACKLIGHT_COLOR);
-        this->prevNumActiveLEDs = 0;
+    int startIndex = numLEDs / 2 + (numLEDs / 2 - SIGNAL_LENGTH);
+
+    for (int i = 0; i < numActiveLEDs; i++) {
+        FastLED.setBrightness(255);
+        LEDStrip[startIndex+i] = SIGNAL_COLOUR; 
     }
-    // for (int i = middleIndex; i >= middleIndex - this->prevNumActiveLEDs; i--) {
-    //     LEDStrip[i] = SIGNAL_COLOUR;
-    // }
-    this->prevNumActiveLEDs++;
-    LEDStrip[this->prevNumActiveLEDs] = SIGNAL_COLOUR;
 }
 
 void Signals::LeftSignal() {
-    int middleIndex = numLEDs / 2;
-    this->prevNumActiveLEDs++;
-    if (this->prevNumActiveLEDs >= middleIndex) {
-        SetSolid(BACKLIGHT_COLOR);
-        this->prevNumActiveLEDs = 0;
-    }
-    for (int i = middleIndex; i <= middleIndex + this->prevNumActiveLEDs; i++) {
-        LEDStrip[i] = SIGNAL_COLOUR;
+    int startIndex = numLEDs / 2 - (numLEDs / 2 - SIGNAL_LENGTH) - 1;
+
+    for (int i = 0; i < numActiveLEDs; i++) {
+        FastLED.setBrightness(255);
+        LEDStrip[startIndex-i] = SIGNAL_COLOUR; 
     }
 }
 
 void Signals::SetSolid(CRGB color) {
-    for (int i = 0; i < numLEDs; i++) {
-        LEDStrip[i] = color;
-    }
+    fill_solid(this->LEDStrip, this->numLEDs, color);
 }

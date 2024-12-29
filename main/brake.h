@@ -3,20 +3,21 @@
 #include "signals.h"
 #include "gyro.h"
 
-#define BACKLIGHT_COLOR CRGB(10, 0, 0) // Dim red for the background
-#define GLOBAL_BRIGHTNESS 255
+#define BACKLIGHT_COLOR CRGB(0, 10, 0) // Dim red for the background
+#define GLOBAL_BRIGHTNESS 255 // 0-255, this might be broken
 
-#define MIN_BRAKE_BRIGHTNESS 150
-#define MAX_BRAKE_BRIGHTNESS 255
+#define MIN_BRAKE_BRIGHTNESS 100 // 0-255
+#define MAX_BRAKE_BRIGHTNESS 255 //0-255
 
-#define FLASH_DELAY 25 // delay between flashes in ms
-#define INITIALIZE_BRAKING_FLASH_LENGTH 15 // number of flashes
+#define CENTER_FLASH_DELAY 50 // flashrate of the center part
+#define CENTER_FLASH_BRIGHTNESS 200
 
-#define EMERGENCY_BRAKING_THRESHOLD 32 // note this is number of LEDs FROM THE CENTER
-#define MARIO_STAR_THRESHOLD 32
-#define INITIAL_BRAKE_THRESHOLD 0 // note this is number of LEDs FROM THE CENTER
+#define FLASH_DELAY 25 // delay between flashes for emergency and initialization of brakes
+#define INITIALIZE_BRAKING_FLASH_LENGTH 10 // number of flashes
 
 #define TIME_BETWEEN_INI_BRAKE 3000 // cant continuously initialize braking if gyro is acting up
+#define CENTER_FLASH_WIDTH 4 // Width of the flashing center part of the brake. should be even
+
 #define SHOW_ACCEL true
 #define SHOW_MARIO true
 
@@ -27,13 +28,19 @@ private:
     CRGB *LEDStrip; // Pointer to the LED strip
     Signals *signals;
     Gyro *gyro;
+
     bool flashON = false; // status while flashing
+    bool centerFlashON = false; // status while center flashing
+
     unsigned long lastFlashTime = 0; // time of the last flash
+    unsigned long lastCenterFlashTime = 0; // time of the last center flash
     unsigned long lastRainbowTime = 0; // time of the last rainbow
+    unsigned long timeSinceLastIniBraking = 0; // time since last initialized braking
+
     int numLEDs;
-    int prevNumActiveLEDs = 0;
+    int middleIndex;
+    
     void SetSolid(CRGB color);
-    unsigned long timeSinceLastIniBraking = 0;
 
 public:
     bool initializedBraking = false; // status of the braking
@@ -44,6 +51,6 @@ public:
     Brake(Signals *signal, CRGB *leds, Gyro *gyro, int num_leds);
     void Update();
     void FlashRedLEDs();
-    void UpdateBrakeLEDs();
     void MarioStar();
+    void FlashCenterLEDs();
 };

@@ -63,13 +63,15 @@ void Gyro::Update() {
         Serial.println("Failed to read from MPU");
         return;
     }
+    this->prevAcc = this->smoothedAcc;
 
     // Calculate the corrected acceleration
-    this->correctedAcc = (sqrt(this->measuredAccX * this->measuredAccX +
-                            this->measuredAccY * this->measuredAccY +
-                            this->measuredAccZ * this->measuredAccZ) 
-                            - this->idleAcc)
-                            * (this->measuredAccY >= 0 ? 1 : -1);
+    // this->correctedAcc = (sqrt(this->measuredAccX * this->measuredAccX +
+    //                         this->measuredAccY * this->measuredAccY +
+    //                         this->measuredAccZ * this->measuredAccZ) 
+    //                         - this->idleAcc)
+    //                         * (this->measuredAccY >= 0 ? 1 : -1);
+    this->correctedAcc = this->measuredAccY;
 
     // Check for sudden bumps
     if (abs(this->prevAcc - this->correctedAcc) > BUMP_THRESHOLD && FILTER_DELTA) {
@@ -118,12 +120,10 @@ void Gyro::Update() {
     if (!FILTER_AVG) {
         this->numSamples = AVG_SAMPLE_SIZE;
         this->sumSamples = this->correctedAcc;
-        this->prevAcc = this->correctedAcc;
     }
     if (this->numSamples < AVG_SAMPLE_SIZE) {
         this->sumSamples += this->correctedAcc;
         this->numSamples++;
-        this->prevAcc = this->correctedAcc;
         // Serial.print("Raw: ");
         // Serial.println(this->correctedAcc);
     }
@@ -140,7 +140,6 @@ void Gyro::Update() {
         this->avgAcc = 0.0;
         this->sumSamples = 0.0;
 
-        this->prevAcc = this->smoothedAcc;
         lastUpdateTime = millis();
         Serial.print("Acc: ");
         Serial.println(this->smoothedAcc);
