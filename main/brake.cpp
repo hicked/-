@@ -9,6 +9,8 @@ Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, int num_leds) {
 }
 
 void Brake::Update() {
+    unsigned long currentTime = millis();
+    this->SetSolid(BACKLIGHT_COLOR);
     if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) { // breaking
         // Flash the LEDs in the center
         this->FlashCenterLEDs();
@@ -29,9 +31,9 @@ void Brake::Update() {
             for (int i = 0; i < numLEDs/2 - CENTER_FLASH_WIDTH/2 - SIGNAL_LENGTH; i++) {
                 int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
                 int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1; 
-                
-                this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // red brake color
-                this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
+
+                this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // red brake color
+                this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
             }         
         } 
         // Otherwise, use progressive brake lighting
@@ -40,26 +42,8 @@ void Brake::Update() {
                 int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
                 int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1; 
 
-                // dont need these if statements...?
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                // check
-                if (index1 >= 0 && index1 < this->numLEDs && !signals->left) {
-                    this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // red brake color
-                }
-                if (index2 >= 0 && index2 < this->numLEDs && !signals->right) {
-                    this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
-                }
+                this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // red brake color
+                this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
             }
         }
     } 
@@ -69,49 +53,40 @@ void Brake::Update() {
             int index1 = middleIndex + i;
             int index2 = middleIndex - i - 1;
             
-            if (index1 >= 0 && index1 < this->numLEDs && !signals->left) {
-                this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // Green brake color
-            }
-            if (index2 >= 0 && index2 < this->numLEDs && !signals->right) {
-                this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
-            }
+            this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // Green brake color
+            this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
         }
     }
 }
 
 void Brake::FlashCenterLEDs() {
+    unsigned long currentTime = millis();
     // If the time since the last flash is greater than the delay betweem flashes
-    if (millis() - this->lastCenterFlashTime >= FLASH_DELAY) {
-        int index1 = middleIndex + CENTER_FLASH_WIDTH - 1;
-        int index2 = middleIndex - CENTER_FLASH_WIDTH - 2;
-        
-        this->lastCenterFlashTime = currentMillis;
+    if (currentTime - this->lastCenterFlashTime >= CENTER_FLASH_DELAY) {
+        this->lastCenterFlashTime = currentTime;
         this->centerFlashON = !this->centerFlashON;
+    }
 
-        for(int i = 0; i < CENTER_FLASH_WIDTH/2; i++) {
-            int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
-            int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1;
+    for(int i = 0; i < CENTER_FLASH_WIDTH/2; i++) {
+        int index1 = middleIndex + i;
+        int index2 = middleIndex - i - 1;
 
-            if (this->centerFlashON) {
-                this->LEDStrip[index1] = CRGB(MAX_BRAKE_BRIGHTNESS, 0, 0); // Flash red
-                this->LEDStrip[index2] = CRGB(MAX_BRAKE_BRIGHTNESS, 0, 0);
-            } else {
-                this->LEDStrip[index1] = BACKLIGHT_COLOR; // Reset to background
-                this->LEDStrip[index2] = BACKLIGHT_COLOR;
-            }
+        if (this->centerFlashON) {
+            this->LEDStrip[index1] = CRGB(0, CENTER_FLASH_BRIGHTNESS, 0); // Flash red
+            this->LEDStrip[index2] = CRGB(0, CENTER_FLASH_BRIGHTNESS, 0);
         }
     }
 }
 
 void Brake::FlashRedLEDs() {
-    unsigned long currentMillis = millis();
+    unsigned long currentTime = millis();
 
-    if (currentMillis - this->lastFlashTime >= FLASH_DELAY) {
-        this->lastFlashTime = currentMillis;
+    if (currentTime - this->lastFlashTime >= FLASH_DELAY) {
+        this->lastFlashTime = currentTime;
         this->flashON = !this->flashON;
 
         if (this->flashON) {
-            this->SetSolid(CRGB(MAX_BRAKE_BRIGHTNESS, 0, 0)); // Flash red
+            this->SetSolid(CRGB(0, MAX_BRAKE_BRIGHTNESS, 0)); // Flash red
             this->flashCount--;
         } else {
             this->SetSolid(BACKLIGHT_COLOR); // Reset to background
@@ -125,17 +100,17 @@ void Brake::SetSolid(CRGB color) {
 
 void Brake::MarioStar() {
     static int position = 0; // Tracks the current position of the marquee
-    unsigned long currentMillis = millis();
+    unsigned long currentTime = millis();
 
-    if (currentMillis - this->lastRainbowTime >= 10) { 
-        this->lastRainbowTime = currentMillis;
+    if (currentTime - this->lastRainbowTime >= 10) { 
+        this->lastRainbowTime = currentTime;
 
         // Clear all LEDs first (optional but ensures clean transitions)
         fill_solid(this->LEDStrip, this->numLEDs, CRGB::Black);
         for (int i = 0; i < this->numLEDs; i++) {
             // Calculate the position of the lit LED in the marquee
             int ledPosition = (position + i) % this->numLEDs;
-            this->LEDStrip[ledPosition] = CHSV((i * 256 / this->numLEDs + currentMillis / 10) % 256, 255, MAX_BRAKE_BRIGHTNESS);
+            this->LEDStrip[ledPosition] = CHSV((i * 256 / this->numLEDs + currentTime / 10) % 256, 255, MAX_BRAKE_BRIGHTNESS);
         }
         position = (position + 1) % this->numLEDs;
     }

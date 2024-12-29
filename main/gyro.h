@@ -12,13 +12,13 @@
 
 // divide all these values by 17000 to get the amount in g force
 #define MIN_GYRO_BREAKING 500 // buffer area where gyro wont do anything
-#define MAX_GYRO_BREAKING 5000
+#define MAX_GYRO_BREAKING 17000
 
 #define MIN_GYRO_ACCELERATING 1000 // buffer area where gyro wont do anything
-#define MAX_GYRO_ACCELERATING 5000
+#define MAX_GYRO_ACCELERATING 17000
 
 #define EXPECTED_ACC_MAGNITUDE 17000.0
-#define CALIBRATION_SAMPLE_SIZE 500 // sample size for calibration phase
+#define CALIBRATION_SAMPLE_SIZE 50 // sample size for calibration phase
 #define CALIBRATION_ACC_DELTA 500 // ensures that the acc found during calibration is within this of EXPECTED_ACC_MAGNITUDE
 
 
@@ -27,7 +27,7 @@
 // First, it will check the raw value of the acceleration. If this value is too dissimilar from the previous value,
 // the data will be disregarded. It automatically detect errors, overriding bumps if it detects continuous bumps for x amount of time.
 // side note, there is a bug where it gets in an infinite loop if multiple overrides stack. For this reason there is a minimum time between overrides
-#define FILTER_DELTA true
+#define FILTER_DELTA false
 
 #define BUMP_THRESHOLD 1000 // if the acceleration changes by this much, its probably a bump
 #define SAMPLE_SIZE_BUMPS 20 // if there are this many bumps in a row that are within threshold of each other,

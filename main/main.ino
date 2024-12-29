@@ -21,20 +21,15 @@ void setup() {
     FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, RGB>(leds, NUM_LEDS);
     FastLED.clear();
     FastLED.setBrightness(GLOBAL_BRIGHTNESS);
-    FastLED.show();
 
     // Initialize Serial for debugging
     Serial.begin(115200);
     Serial.println("Serial initialized");
 
     // Setup pins
-    pinMode(LEFT_SIGNAL_PIN, INPUT);
-    pinMode(RIGHT_SIGNAL_PIN, INPUT);
+    pinMode(LEFT_SIGNAL_PIN, INPUT_PULLUP);
+    pinMode(RIGHT_SIGNAL_PIN, INPUT_PULLUP);
     pinMode(MOSFET_PIN, OUTPUT);
-
-    // Attach interrupts to encoder pins
-    attachInterrupt(digitalPinToInterrupt(ENCODER_PIN_A), handleEncoderA, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(ENCODER_PIN_B), handleEncoderB, CHANGE);
 
     // Initialize objects
     gyro = new Gyro();
@@ -44,15 +39,16 @@ void setup() {
 
 
 void loop() {
+    brake->FlashCenterLEDs();
     gyro->Update(); // Updates the value of smoothedAcc
 
     // Update the number of active LEDs and brightness of the brake lights
     if (gyro->smoothedAcc > 0) { // accelerating
-        brake->numActiveLEDs = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, (NUM_LEDS - CENTER_FLASH_WIDTH)/2);
-        brake->active_brightness = map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+        brake->numActiveLEDs = constrain(map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, 0, NUM_LEDS/2), 0, NUM_LEDS/2);
+        brake->active_brightness = constrain(map(gyro->smoothedAcc, MIN_GYRO_ACCELERATING, MAX_GYRO_ACCELERATING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS), 0, MAX_BRAKE_BRIGHTNESS);
     } else { // breaking
-        brake->numActiveLEDs = map(abs(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0,  (NUM_LEDS - CENTER_FLASH_WIDTH)/2);
-        brake->active_brightness = map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS);
+        brake->numActiveLEDs = constrain(map(abs(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0,  (NUM_LEDS - CENTER_FLASH_WIDTH)/2), 0, (NUM_LEDS - CENTER_FLASH_WIDTH)/2);
+        brake->active_brightness = constrain(map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS), 0, MAX_BRAKE_BRIGHTNESS);
     }
 
     if (SHOW_MARIO && gyro->smoothedAcc > MAX_GYRO_ACCELERATING) {
@@ -66,21 +62,6 @@ void loop() {
     else { // handled outside brake.update() since we want it to go OVER the turn signals, while normal brake lights go UNDER signals
         brake->FlashRedLEDs();
     }
+    
     FastLED.show();
-}
-
-
-// Function to update encoder position
-void updateEncoder() {
-    bool A = digitalRead(ENCODER_PIN_A);
-    bool B = digitalRead(ENCODER_PIN_B);
-
-    if (B != prevB) {
-        encoderPosition += (B - prevB) * (A ? +1 : -1);
-    } else if (A != prevA) {
-        encoderPosition += (A - prevA) * (B ? -1 : +1);
-    }
-
-    prevA = A;
-    prevB = B;
 }

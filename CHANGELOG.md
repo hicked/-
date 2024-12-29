@@ -12,13 +12,14 @@ Date is in YYYY/MM/DD format.
 
 **D**: Patch / Very Minor Thing
 
-## [v.2.2.0] - 2024-12-28
+## [v.2.2.0] - 2024-12-29
 **Author:** Antoine
 -   Fixed brake light flashing logic that wasnt working
 -   Made it so the center leds always flash when braking
 -   Made it so signals have variable length (header)
 -   Made it so if signal is on, brake becomes static (solid, not progressive)
 -   Implemented detecting of signal from wire input of bike
+> Note all colours are in GRB for now since different leds are used
 
 ## [v.2.1.0] - 2024-12-26
 **Author:** Antoine

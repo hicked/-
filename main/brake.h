@@ -3,21 +3,20 @@
 #include "signals.h"
 #include "gyro.h"
 
-#define BACKLIGHT_COLOR CRGB(10, 0, 0) // Dim red for the background
-#define GLOBAL_BRIGHTNESS 255
+#define BACKLIGHT_COLOR CRGB(0, 10, 0) // Dim red for the background
+#define GLOBAL_BRIGHTNESS 255 // 0-255, this might be broken
 
-#define MIN_BRAKE_BRIGHTNESS 150
-#define MAX_BRAKE_BRIGHTNESS 255
+#define MIN_BRAKE_BRIGHTNESS 100 // 0-255
+#define MAX_BRAKE_BRIGHTNESS 255 //0-255
 
-#define FLASH_DELAY 25 // delay between flashes in ms
-#define INITIALIZE_BRAKING_FLASH_LENGTH 15 // number of flashes
+#define CENTER_FLASH_DELAY 50 // flashrate of the center part
+#define CENTER_FLASH_BRIGHTNESS 200
 
-#define EMERGENCY_BRAKING_THRESHOLD 32 // note this is number of LEDs FROM THE CENTER
-#define MARIO_STAR_THRESHOLD 32
-#define INITIAL_BRAKE_THRESHOLD 0 // note this is number of LEDs FROM THE CENTER
+#define FLASH_DELAY 25 // delay between flashes for emergency and initialization of brakes
+#define INITIALIZE_BRAKING_FLASH_LENGTH 10 // number of flashes
 
 #define TIME_BETWEEN_INI_BRAKE 3000 // cant continuously initialize braking if gyro is acting up
-#define CENTER_FLASH_WIDTH 2 // Width of the flashing center part of the brake. should be even
+#define CENTER_FLASH_WIDTH 4 // Width of the flashing center part of the brake. should be even
 
 #define SHOW_ACCEL true
 #define SHOW_MARIO true
