@@ -4,7 +4,7 @@
 
 #define LEFT_SIGNAL_PIN 9
 #define RIGHT_SIGNAL_PIN 10
-//grb
+
 #define SIGNAL_COLOUR CRGB(65, 255, 0)
 #define SIGNAL_BRIGHTNESS 255
 

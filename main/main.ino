@@ -39,7 +39,6 @@ void setup() {
 
 
 void loop() {
-    brake->FlashCenterLEDs();
     gyro->Update(); // Updates the value of smoothedAcc
 
     // Update the number of active LEDs and brightness of the brake lights

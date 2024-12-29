@@ -62,7 +62,7 @@ void Brake::Update() {
 void Brake::FlashCenterLEDs() {
     unsigned long currentTime = millis();
     // If the time since the last flash is greater than the delay betweem flashes
-    if (currentTime - this->lastCenterFlashTime >= CENTER_FLASH_DELAY) {
+    if (currentTime - this->lastCenterFlashTime >= CENTER_FLASH_SPEED) {
         this->lastCenterFlashTime = currentTime;
         this->centerFlashON = !this->centerFlashON;
     }
@@ -81,7 +81,7 @@ void Brake::FlashCenterLEDs() {
 void Brake::FlashRedLEDs() {
     unsigned long currentTime = millis();
 
-    if (currentTime - this->lastFlashTime >= FLASH_DELAY) {
+    if (currentTime - this->lastFlashTime >= FLASH_SPEED) {
         this->lastFlashTime = currentTime;
         this->flashON = !this->flashON;
 
