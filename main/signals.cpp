@@ -9,14 +9,14 @@ void Signals::Update() {
     unsigned long currentTime = millis();
 
     this->UpdateStates();
-    if (currentTime - lastSignalUpdate > SIGNAL_DELAY && (this->left || this->right)) {
+    if (this->numActiveLEDs < SIGNAL_LENGTH && currentTime - lastSignalUpdate > SIGNAL_SPEED && (this->left || this->right)) {
         lastSignalUpdate = currentTime;
         this->numActiveLEDs++;
-        if (this->numActiveLEDs > SIGNAL_LENGTH) {
-            this->numActiveLEDs = 0;
-        }
-        Serial.println(this->numActiveLEDs);
-        
+    }
+    // pauses when bar is full momentarily
+    else if (this->numActiveLEDs >= SIGNAL_LENGTH && currentTime - lastSignalUpdate > PAUSE_TIME) {
+        lastSignalUpdate = currentTime;
+        this->numActiveLEDs = 0;
     }
 
     if (left) {
@@ -49,20 +49,16 @@ void Signals::UpdateStates() {
 }
 
 void Signals::RightSignal() {
-    // int startIndex = numLEDs / 2 - (numLEDs / 2 - SIGNAL_LENGTH);
-    // this->prevNumActiveLEDs++;
-    // if (this->prevNumActiveLEDs >= startIndex) {
-    //     SetSolid(BACKLIGHT_COLOR);
-    //     this->prevNumActiveLEDs = 0;
-    //     return;
-    // }
-    // for (int i = startIndex; i >= startIndex - this->prevNumActiveLEDs; i--) {
-    //     LEDStrip[startIndex+i+1] = SIGNAL_COLOUR;
-    // }
+    int startIndex = numLEDs / 2 + (numLEDs / 2 - SIGNAL_LENGTH);
+
+    for (int i = 0; i < numActiveLEDs; i++) {
+        FastLED.setBrightness(255);
+        LEDStrip[startIndex+i] = SIGNAL_COLOUR; 
+    }
 }
 
 void Signals::LeftSignal() {
-    int startIndex = numLEDs / 2 - (numLEDs / 2 - SIGNAL_LENGTH);
+    int startIndex = numLEDs / 2 - (numLEDs / 2 - SIGNAL_LENGTH) - 1;
 
     for (int i = 0; i < numActiveLEDs; i++) {
         FastLED.setBrightness(255);
