@@ -4,4 +4,5 @@ The main premise of this project is to add a LED strip to the rear of a motorcyc
 
 Additionally, due to engine braking being so strong, a gyroscope will be used instead of a simple switch to ensure accurate reports on the deceleration of the motorcyclist.
 
-![Circuit](image.png)
+![Circuit](Media/image.png)
+<video controls src="Media/VID20241231170116.mp4" title="Title"></video>
