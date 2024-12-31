@@ -1,7 +1,18 @@
 # Motorcycle-Signals
-This is an Arduino based project focused on insuring road safety of motorcyclist.
-The main premise of this project is to add a LED strip to the rear of a motorcycle, displaying things like the rate of deceleration and signals in a sequential manner. This allows vehicles behind the motorcyclist to know just HOW MUCH they are braking, instead of only having a binary feedback look (brake light ON/OFF).
+As we know, rear-ends, while not the most fatal, are considered to be the most common type of collision.
+Therefore, this is an Arduino project focused on increasing road safety of motorcyclists by making them more visible from behind, as well as better communicate their intentions on the roadways.
 
-Additionally, due to engine braking being so strong, a gyroscope will be used instead of a simple switch to ensure accurate reports on the deceleration of the motorcyclist.
+Motorcyclists know that there are two fundamental problems with motorcycle brake lights:
+1. The first is that they are far too small, sometimes going by unnoticed. This is one of the problems that this projects aims to fix, by incorporating a center flashing element, which is sure to get drivers attention.
+2. The second, and arguably more dangerous problem, is that the rear light is activated based solely on brake input. This means that if the motorcyclist chooses to downshift instead of brake, the brake lights will never turn on. This varies from bike to bike, but regardless, it would be important to communicate this information to the riders behind us, as all they care about is whether were slowing down or not, regardless of brake activation.
+These two effects are hightened even more when we consider the weight of motorcycles, sometimes cutting their braking distances by half in some ideal circumstances. 
+
+Thus, this project will have a few set goals:
+1. Use a gyroscope to detect braking instead of brake input.
+2. Lightly flash the center of the brake light when braking.
+3. Flash the entire brake light when emergency braking is detected.
+4. Flash the entire brake light when braking has been initialize (when braking for the first time).
+5. The brake light will light up MORE the harder the deceleration (*Ex; at -1m/s^2 have 10 LEDs turn on, when -2m/s^2 have 20 LEDs turn on, etc*).
+6. Incorporate sequential turn signals.
 
 ![Circuit](image.png)
