@@ -19,5 +19,5 @@ Thus, this project will have a few set goals:
 
 ## Circuit Diagram
 ![Circuit](Media/image.png)
-https://github.com/user-attachments/assets/ab9467a9-18b9-4282-be89-5ba0fdf90215
+![VID20241231170116](https://github.com/user-attachments/assets/03d63844-a77f-4636-bbd6-6810d4615508)
 
