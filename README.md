@@ -19,4 +19,5 @@ Thus, this project will have a few set goals:
 
 ## Circuit Diagram
 ![Circuit](Media/image.png)
-![Video](Media/VID20241231170116.mp4)
+https://github.com/user-attachments/assets/ab9467a9-18b9-4282-be89-5ba0fdf90215
+
