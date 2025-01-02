@@ -5,6 +5,7 @@
 
 // Note, all CRGB values are in GRB format for now
 #define BRAKE_PIN 11 // Pin for the brake lights
+
 #define BACKLIGHT_COLOR CRGB(0, 10, 0) // Dim red for the background
 #define GLOBAL_BRIGHTNESS 255 // 0-255, this might be broken
 
