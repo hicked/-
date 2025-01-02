@@ -4,6 +4,7 @@
 #include "gyro.h"
 
 // Note, all CRGB values are in GRB format for now
+#define BRAKE_PIN 11 // Pin for the brake lights
 #define BACKLIGHT_COLOR CRGB(0, 10, 0) // Dim red for the background
 #define GLOBAL_BRIGHTNESS 255 // 0-255, this might be broken
 
@@ -49,6 +50,8 @@ public:
     int active_brightness; // brightness of the brake, based on how hard you brake
     int flashCount = 0; // amount of times that the leds need to flash will be reduced by one each time by FlashRedLEDs
     int numActiveLEDs = 0; // number of LEDs from the center that are ON, based on how hard you brake
+
+    bool brakeON = false; // status of the brake based on wire input
 
     Brake(Signals *signal, CRGB *leds, Gyro *gyro, int num_leds);
     void Update(); // update the brake lights. numActiveLEDs and active_brightness must be changed externally (main)

@@ -11,6 +11,13 @@ Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, int num_leds) {
 void Brake::Update() {
     unsigned long currentTime = millis();
     this->SetSolid(BACKLIGHT_COLOR);
+
+    if (digitalRead(BRAKE_PIN) == HIGH) {
+        this->brakeON = true;
+    } else {
+        this->brakeON = false;
+    }
+
     if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) { // breaking
         // Flash the LEDs in the center
         this->FlashCenterLEDs();

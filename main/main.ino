@@ -3,7 +3,6 @@
 #include "signals.h"
 #include "gyro.h"
 
-#define MOSFET_PIN 6
 #define LED_DATA_PIN_1 4
 #define LED_DATA_PIN_2 5
 
@@ -27,9 +26,9 @@ void setup() {
     Serial.println("Serial initialized");
 
     // Setup pins
-    pinMode(LEFT_SIGNAL_PIN, INPUT_PULLUP);
-    pinMode(RIGHT_SIGNAL_PIN, INPUT_PULLUP);
-    pinMode(MOSFET_PIN, OUTPUT);
+    pinMode(LEFT_SIGNAL_PIN, INPUT);
+    pinMode(RIGHT_SIGNAL_PIN, INPUT);
+    pinMode(BRAKE_PIN, INPUT);
 
     // Initialize objects
     gyro = new Gyro();
@@ -48,6 +47,10 @@ void loop() {
     } else { // breaking
         brake->numActiveLEDs = constrain(map(abs(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, 0,  (NUM_LEDS - CENTER_FLASH_WIDTH)/2), 0, (NUM_LEDS - CENTER_FLASH_WIDTH)/2);
         brake->active_brightness = constrain(map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS), 0, MAX_BRAKE_BRIGHTNESS);
+    }
+
+    if (abs(gyro->smoothedAcc - gyro->exponentialAcc) < 1000 && brake->brakeON) { // at rest, brake activated
+        brake->numActiveLEDs = NUM_LEDS/2-1;
     }
 
     if (SHOW_MARIO && gyro->smoothedAcc > MAX_GYRO_ACCELERATING) {
