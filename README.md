@@ -1,12 +1,12 @@
 # Motorcycle-Signals
-As we know, rear-ends, while not the most fatal, are considered to be the most common type of collision.
-Therefore, this is an Arduino project focused on increasing road safety of motorcyclists by making them more visible from behind, as well as better communicate their intentions on the roadways.
+As we know, rear-ends, while not the most fatal, are considered to be the most common type of collision. However, for motorcyclist, rear-ends can still be very dangerous.
+Therefore, this is an Arduino project focused on increasing road safety for motorcyclists by making them more visible from behind, as well as better communicate their intentions on roadways.
 
 ## The Problems
-Motorcyclists know that there are two fundamental problems with motorcycle brake lights:
-1. The first is that they are far too small, sometimes going by unnoticed. This is one of the problems that this projects aims to fix, by incorporating a center flashing element, which is sure to get drivers attention.
-2. The second, and arguably more dangerous problem, is that the rear light is activated based solely on brake input. This means that if the motorcyclist chooses to downshift instead of brake, the brake lights will never turn on. This varies from bike to bike, but regardless, it would be important to communicate this information to the riders behind us, as all they care about is whether were slowing down or not, regardless of brake activation.
-These two effects are hightened even more when we consider the weight of motorcycles, sometimes cutting their braking distances by half in some ideal circumstances. 
+Motorcyclists know that there are two fundamental problems with their brake lights:
+1. The first is that they are far too small, making it hard to judge their distance, sometimes going completely unnoticed. This is one of the problems that this projects aims to fix, by incorporating a center flashing element, which is sure to get drivers attention.
+2. The second, and arguably more dangerous problem, is that the rear light is activated solely based on brake input. This means that if the motorcyclist chooses to downshift instead of using their brakes, the brake lights will never turn on. This varies from bike to bike, but regardless, it would be important to communicate this information to the drivers behind us, as all they care about is whether were slowing down or not, regardless of brake activation.
+These two effects are hightened even more when we consider the weight of motorcycles, sometimes cutting their braking distances by half in ideal circumstances. 
 
 ## The Solutions
 Thus, this project will have a few set goals:
