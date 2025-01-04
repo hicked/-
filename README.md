@@ -22,4 +22,5 @@ Thus, this project will have a few set goals:
 
 
 ## Other Media
+### Hazards
 ![VID20241231170116](https://github.com/user-attachments/assets/03d63844-a77f-4636-bbd6-6810d4615508)

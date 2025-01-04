@@ -12,11 +12,7 @@ void Brake::Update() {
     unsigned long currentTime = millis();
     this->SetSolid(BACKLIGHT_COLOR);
 
-    if (digitalRead(BRAKE_PIN) == HIGH) {
-        this->brakeON = true;
-    } else {
-        this->brakeON = false;
-    }
+    this->brakeON = digitalRead(BRAKE_PIN);
 
     if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) { // breaking
         // Flash the LEDs in the center
@@ -66,7 +62,8 @@ void Brake::Update() {
     }
 }
 
-void Brake::FlashCenterLEDs() {
+
+void Brake::FlashCenterLEDs() { // Flashing of the center LEDs
     unsigned long currentTime = millis();
     // If the time since the last flash is greater than the delay betweem flashes
     if (currentTime - this->lastCenterFlashTime >= CENTER_FLASH_SPEED) {
@@ -85,7 +82,7 @@ void Brake::FlashCenterLEDs() {
     }
 }
 
-void Brake::FlashRedLEDs() {
+void Brake::FlashRedLEDs() { // Flashing of the entire LED strip
     unsigned long currentTime = millis();
 
     if (currentTime - this->lastFlashTime >= FLASH_SPEED) {
