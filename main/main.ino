@@ -49,7 +49,7 @@ void loop() {
         brake->active_brightness = constrain(map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS), 0, MAX_BRAKE_BRIGHTNESS);
     }
 
-    if (abs(gyro->smoothedAcc - gyro->exponentialAcc) < 1000 && brake->brakeON) { // at rest, brake activated
+    if (abs(gyro->smoothedAcc - EXPECTED_ACC_MAGNITUDE) < 1000 && brake->brakeON) { // at rest, brake activated
         brake->numActiveLEDs = NUM_LEDS/2-1;
     }
 
