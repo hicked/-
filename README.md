@@ -18,7 +18,8 @@ Thus, this project will have a few set goals:
 7. Incorporate sequential turn signals.
 
 ## Circuit Diagram
-![Screenshot 2025-01-02 053829](https://github.com/user-attachments/assets/b2a8437c-69d4-48ec-aa90-20a69da06fd5)
+![Screenshot 2025-01-04 022818](https://github.com/user-attachments/assets/97b3e572-dd8e-40e1-9ff4-1bbe8d284469)
+
 
 ## Other Media
 ![VID20241231170116](https://github.com/user-attachments/assets/03d63844-a77f-4636-bbd6-6810d4615508)
