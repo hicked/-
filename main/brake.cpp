@@ -10,6 +10,13 @@ Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, int num_leds) {
 
 void Brake::Update() {
     unsigned long currentTime = millis();
+
+    if (this->blind) {
+        this->SetSolid(BLIND_COLOR);
+        return;
+    }
+    
+
     this->SetSolid(BACKLIGHT_COLOR);
 
     this->brakeON = digitalRead(BRAKE_PIN);

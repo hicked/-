@@ -6,11 +6,12 @@
 // Note, all CRGB values are in GRB format for now
 #define BRAKE_PIN 11 // Pin for the brake lights
 
-#define BACKLIGHT_COLOR CRGB(0, 10, 0) // Dim red for the background
-#define GLOBAL_BRIGHTNESS 255 // 0-255, this might be broken
+#define BACKLIGHT_COLOR CRGB(10, 0, 0) // Dim red for the background
+#define BLIND_COLOR CRGB(255, 255, 255) // white
 
-#define MIN_BRAKE_BRIGHTNESS 100 // 0-255 minimum brightness of the brake when braking
-#define MAX_BRAKE_BRIGHTNESS 255 //0-255 maximum brightness of the brake when braking
+#define GLOBAL_BRIGHTNESS 200 // 0-255, this might be broken since it gets overriden
+#define MIN_BRAKE_BRIGHTNESS 75 // 0-255 minimum brightness of the brake when braking
+#define MAX_BRAKE_BRIGHTNESS 200 //0-255 maximum brightness of the brake when braking
 
 #define CENTER_FLASH_SPEED 50 // flashrate of the center part lower is faster
 #define CENTER_FLASH_BRIGHTNESS 200 // brightness of the flashing part of the brake
@@ -52,10 +53,13 @@ public:
     int flashCount = 0; // amount of times that the leds need to flash will be reduced by one each time by FlashRedLEDs
     int numActiveLEDs = 0; // number of LEDs from the center that are ON, based on how hard you brake
 
+    bool blind = false;
+
     bool brakeON = false; // status of the brake based on wire input
 
     Brake(Signals *signal, CRGB *leds, Gyro *gyro, int num_leds);
     void Update(); // update the brake lights. numActiveLEDs and active_brightness must be changed externally (main)
     void FlashRedLEDs(); // flash led strip red based on flashCountS
     void MarioStar(); // show mario star on the brake lights
+
 };

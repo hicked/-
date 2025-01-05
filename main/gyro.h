@@ -12,10 +12,10 @@
 
 // divide all these values by 17000 to get the amount in g force
 #define MIN_GYRO_BREAKING 500 // Buffer area where gyro wont do anything
-#define MAX_GYRO_BREAKING 17000 // Max value of gyro when braking. anything more will be emergency braking
+#define MAX_GYRO_BREAKING 16000 // Max value of gyro when braking. anything more will be emergency braking
 
 #define MIN_GYRO_ACCELERATING 1000 // buffer area where gyro wont do anything
-#define MAX_GYRO_ACCELERATING 17000 // maximum value of gyro when accelerating
+#define MAX_GYRO_ACCELERATING 16000 // maximum value of gyro when accelerating
 
 #define EXPECTED_ACC_MAGNITUDE 17000.0 // expected value of acceleration when stationary (gravity only)
 #define CALIBRATION_SAMPLE_SIZE 50 // sample size for calibration phase

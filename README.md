@@ -18,11 +18,12 @@ Thus, this project will have a few set goals:
 7. Incorporate sequential turn signals.
 
 ## Circuit Diagram
-A couple notes:
-1. Two DC-DC Buck converters are used, one  to drive the 12V LEDs and one to drive the 5V Arduino Nano.
-2. Note that, at full brightness, the WS2815s do run hot: Each LED can draw 0.3W. 66 LEDs means 20W of power. At 11V max brightness the current draw is around 0.75A. If the LEDs or Buck are getting hot, either lower the Buck output voltage, or brightness of the LEDs.
-
 ![Screenshot 2025-01-04 022818](https://github.com/user-attachments/assets/97b3e572-dd8e-40e1-9ff4-1bbe8d284469)
+> *Two DC-DC Buck converters are used, one to drive the 12V LEDs and one to drive the 5V Arduino Nano. However, to be safe, the Buck converters are set to 11V and 4V respectively.*
+>
+> *Additionally, at full brightness, the WS2815s and Buck may run hot: Each LED can draw 13mA, at 12V thats 0.16W per LED. With 66 LEDs, thats 11W.*
+> 
+> *For this reason, try to keep the current draw below 0.75A. If the LEDs or Buck are getting hot, simply lower the brightness of the LEDs.*
 
 
 ## Other Media
