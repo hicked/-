@@ -61,5 +61,4 @@ public:
     void Update(); // update the brake lights. numActiveLEDs and active_brightness must be changed externally (main)
     void FlashRedLEDs(); // flash led strip red based on flashCountS
     void MarioStar(); // show mario star on the brake lights
-
 };

@@ -1,14 +1,5 @@
 #pragma once
 #include <Wire.h>
-/*
-    VCC -> 3.3 V / 5 V (better) 
-    GND -> GND 
-    SCL -> A5 
-    SDA -> A4 
-
-    NOTE, GYRO SHOULD HAVE LIGHT TOWARDS STRAIGHT, PINS ON RIGHT
-    TRY TO GET AS FLAT AT POSSIBLE
-*/
 
 // divide all these values by 17000 to get the amount in g force
 #define MIN_GYRO_BREAKING 500 // Buffer area where gyro wont do anything
@@ -46,8 +37,6 @@
 // Finaly, it smoothed the previous and new values together instead of just setting them
 #define FILTER_SMOOTHING true
 #define SMOOTHING_FACTOR 0.3 // lower value is more smoothing, less vibrations, but less reactive/fast
-
-
 
 class Gyro {
 private:
