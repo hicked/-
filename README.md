@@ -25,6 +25,7 @@ Thus, this project will have a few set goals:
 > 
 > *For this reason, try to keep the current draw below 0.75A. If the LEDs or Buck are getting hot, simply lower the brightness of the LEDs.*
 
+![Screenshot 2025-01-05 162910](https://github.com/user-attachments/assets/b7d5cf73-f7a6-4c75-a5ee-a5674e204e44)
 
 ## Other Media
 ### Hazards
