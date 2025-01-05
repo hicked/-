@@ -5,8 +5,7 @@
 #define LEFT_SIGNAL_PIN 9
 #define RIGHT_SIGNAL_PIN 10
 
-#define SIGNAL_COLOUR CRGB(65, 255, 0)
-#define SIGNAL_BRIGHTNESS 255
+#define SIGNAL_COLOUR CRGB(255, 65, 0) // orange
 
 #define SIGNAL_OFF_DELAY 1000 // if the signal pin is off for this long, turn off the signal
 #define SIGNAL_SPEED 20 // 60 to 120 flashes per minute check this legal requirement

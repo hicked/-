@@ -1,20 +1,20 @@
 #pragma once
-#include <FastLED.h>
+#include <FastLED.h> // 3.9.9
 #include "signals.h"
 #include "gyro.h"
 
-// Note, all CRGB values are in GRB format for now
 #define BRAKE_PIN 11 // Pin for the brake lights
 
 #define BACKLIGHT_COLOR CRGB(10, 0, 0) // Dim red for the background
-#define BLIND_COLOR CRGB(255, 255, 255) // white
+#define BLIND_COLOR CRGB(200, 200, 200) // white
+#define FLASH_COLOUR CRGB(255, 0, 0) // Color of the flashing brake lights
+#define CENTER_FLASH_COLOUR CRGB(200, 0, 0) // Color of the flashing brake lights
 
 #define GLOBAL_BRIGHTNESS 200 // 0-255, this might be broken since it gets overriden
 #define MIN_BRAKE_BRIGHTNESS 75 // 0-255 minimum brightness of the brake when braking
 #define MAX_BRAKE_BRIGHTNESS 200 //0-255 maximum brightness of the brake when braking
 
 #define CENTER_FLASH_SPEED 50 // flashrate of the center part lower is faster
-#define CENTER_FLASH_BRIGHTNESS 200 // brightness of the flashing part of the brake
 #define CENTER_FLASH_WIDTH 4 // Width of the flashing center part of the brake. should be even
 
 #define FLASH_SPEED 25 // delay between flashes for emergency braking and initialization of brakes

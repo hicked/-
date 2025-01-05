@@ -12,6 +12,15 @@ Date is in YYYY/MM/DD format.
 
 **D**: Patch / Very Minor Thing
 
+## [v.2.2.1] - 2024-01-05
+**Author:** Antoine
+-   Finalized Signals
+-   Added blind
+-   Refactoring
+-   Changed format to RGB
+-   Included circuit diagram and other media
+> Note, signal and brake inputs are set to `INPUT_PULLUP` for now to ignore noise. These will have to be swapped to `INPUT`. Signals input are also inverted for debugging purposes
+
 ## [v.2.2.0] - 2024-12-29
 **Author:** Antoine
 -   Fixed brake light flashing logic that wasnt working

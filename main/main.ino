@@ -1,4 +1,6 @@
-#include <FastLED.h>
+// Used Arduino Nano board, with old bootloader
+
+#include <FastLED.h> // 3.9.9
 #include "brake.h"
 #include "signals.h"
 #include "gyro.h"
@@ -26,9 +28,10 @@ void setup() {
     Serial.println("Serial initialized");
 
     // Setup pins
-    pinMode(LEFT_SIGNAL_PIN, INPUT);
-    pinMode(RIGHT_SIGNAL_PIN, INPUT);
-    pinMode(BRAKE_PIN, INPUT);
+    // WILL NEED TO CHANGE THESE TO REGULAR INPUTS LATER
+    pinMode(LEFT_SIGNAL_PIN, INPUT_PULLUP);
+    pinMode(RIGHT_SIGNAL_PIN, INPUT_PULLUP);
+    pinMode(BRAKE_PIN, INPUT_PULLUP);
 
     // Initialize objects
     gyro = new Gyro();

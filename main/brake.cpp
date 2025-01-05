@@ -15,11 +15,11 @@ void Brake::Update() {
         this->SetSolid(BLIND_COLOR);
         return;
     }
-    
+
 
     this->SetSolid(BACKLIGHT_COLOR);
 
-    this->brakeON = digitalRead(BRAKE_PIN);
+    this->brakeON = !digitalRead(BRAKE_PIN);
 
     if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) { // breaking
         // Flash the LEDs in the center
@@ -42,8 +42,8 @@ void Brake::Update() {
                 int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
                 int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1; 
 
-                this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // red brake color
-                this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
+                this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // red brake color
+                this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
             }         
         } 
         // Otherwise, use progressive brake lighting
@@ -52,8 +52,8 @@ void Brake::Update() {
                 int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
                 int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1; 
 
-                this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // red brake color
-                this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
+                this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // red brake color
+                this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
             }
         }
     } 
@@ -63,8 +63,8 @@ void Brake::Update() {
             int index1 = middleIndex + i;
             int index2 = middleIndex - i - 1;
             
-            this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // Green brake color
-            this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
+            this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // Green brake color
+            this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
         }
     }
 }
@@ -83,8 +83,8 @@ void Brake::FlashCenterLEDs() { // Flashing of the center LEDs
         int index2 = middleIndex - i - 1;
 
         if (this->centerFlashON) {
-            this->LEDStrip[index1] = CRGB(0, CENTER_FLASH_BRIGHTNESS, 0); // Flash red
-            this->LEDStrip[index2] = CRGB(0, CENTER_FLASH_BRIGHTNESS, 0);
+            this->LEDStrip[index1] = CENTER_FLASH_COLOUR; // Flash red
+            this->LEDStrip[index2] = CENTER_FLASH_COLOUR;
         }
     }
 }
@@ -97,7 +97,7 @@ void Brake::FlashRedLEDs() { // Flashing of the entire LED strip
         this->flashON = !this->flashON;
 
         if (this->flashON) {
-            this->SetSolid(CRGB(0, MAX_BRAKE_BRIGHTNESS, 0)); // Flash red
+            this->SetSolid(FLASH_COLOUR); // Flash red
             this->flashCount--;
         } else {
             this->SetSolid(BACKLIGHT_COLOR); // Reset to background

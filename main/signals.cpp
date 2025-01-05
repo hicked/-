@@ -32,7 +32,7 @@ void Signals::Update() {
 
 void Signals::UpdateStates() {
     // Left turn signal
-    if (digitalRead(LEFT_SIGNAL_PIN) == HIGH) {
+    if (!digitalRead(LEFT_SIGNAL_PIN)) {
         this->left = true;
         leftLastHighTime = millis();
     } else if (this->left && (millis() - leftLastHighTime >= SIGNAL_OFF_DELAY)) {
@@ -40,7 +40,7 @@ void Signals::UpdateStates() {
     }
 
     // Right turn signal
-    if (digitalRead(RIGHT_SIGNAL_PIN) == HIGH) {
+    if (!digitalRead(RIGHT_SIGNAL_PIN)) {
         this->right = true;
         rightLastHighTime = millis();
     } else if (this->right && (millis() - rightLastHighTime >= SIGNAL_OFF_DELAY)) {
