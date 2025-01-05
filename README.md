@@ -8,7 +8,7 @@ Motorcyclists know that there are two fundamental problems with their brake ligh
 2. The second, and arguably more dangerous problem, is that the rear light is activated solely based on brake input. This means that if the motorcyclist chooses to downshift instead of using their brakes, the brake lights will never turn on. This varies from bike to bike, but regardless, it would be important to communicate this information to the drivers behind us, as all they care about is whether were slowing down or not, regardless of brake activation.
 These two effects are hightened even more when we consider the weight of motorcycles, sometimes cutting their braking distances by half in ideal circumstances. 
 
-## The Solutions
+## The Solution
 Thus, this project will have a few set goals:
 1. Use a gyroscope to detect braking instead of brake input (bumps will have to be filtered out).
 3. Lightly flash the center of the brake light when braking.
