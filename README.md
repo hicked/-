@@ -27,6 +27,11 @@ Thus, this project will have a few set goals:
 
 ![Screenshot 2025-01-05 162910](https://github.com/user-attachments/assets/b7d5cf73-f7a6-4c75-a5ee-a5674e204e44)
 
+## Customization and Header Files
+I did my best to make this project as versatile and scalable as possible. Therefore, the LEDs should be able to be tailored and customized easily, by simply changing the parameters in the header files.
+To do this, after downloading the program files, simply open all the files ending in `.h` and change the values of the `#define`'s to whatever your liking.
+![Screenshot 2025-01-05 165439](https://github.com/user-attachments/assets/3c05c40d-e91a-444e-a3c6-27e4b3e6d679)
+
 ## Other Media
 ### Hazards
 ![VID20241231170116](https://github.com/user-attachments/assets/03d63844-a77f-4636-bbd6-6810d4615508)
