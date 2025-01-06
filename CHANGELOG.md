@@ -12,7 +12,7 @@ Date is in YYYY/MM/DD format.
 
 **D**: Patch / Very Minor Thing
 
-## [v.2.2.1] - 2024-01-05
+## [v.2.2.1-beta] - 2024-01-05
 **Author:** Antoine
 -   Finalized Signals
 -   Added blind
@@ -21,7 +21,7 @@ Date is in YYYY/MM/DD format.
 -   Included circuit diagram and other media
 > Note, signal and brake inputs are set to `INPUT_PULLUP` for now to ignore noise. These will have to be swapped to `INPUT`. Signals input are also inverted for debugging purposes
 
-## [v.2.2.0] - 2024-12-29
+## [v.2.2.0-beta] - 2024-12-29
 **Author:** Antoine
 -   Fixed brake light flashing logic that wasnt working
 -   Made it so the center leds always flash when braking
@@ -30,7 +30,7 @@ Date is in YYYY/MM/DD format.
 -   Implemented detecting of signal from wire input of bike
 > Note all colours are in GRB for now since different leds are used
 
-## [v.2.1.0] - 2024-12-26
+## [v.2.1.0-prealpha] - 2024-12-26
 **Author:** Antoine
 -   Gyro logic, including filter, completed.
     -   Now ignores gravity (calculated during calibration phase on startup)
@@ -44,7 +44,7 @@ Date is in YYYY/MM/DD format.
 > Lots of parameters can be changed in the `gyro.h` header file to get more favorable results
 
 
-## [v.1.1.0] - 2024-11-30
+## [v.1.1.0-prealpha] - 2024-11-30
 **Author:** Antoine
 -   **ALL CONTROL BASED ON GYRO AS INTENDED**
 -   ADDED CONRTOLS BASED ON GYRO Y AXIS
