@@ -25,7 +25,7 @@ private:
 
     void LeftSignal();
     void RightSignal();
-    void SetSolid(CRGB color);
+    void SetSolid(CRGB colour);
 
 public:
     bool left = false;

@@ -5,10 +5,10 @@
 
 #define BRAKE_PIN 11 // Pin for the brake lights
 
-#define BACKLIGHT_COLOR CRGB(10, 0, 0) // Dim red for the background
-#define BLIND_COLOR CRGB(200, 200, 200) // white
-#define FLASH_COLOUR CRGB(255, 0, 0) // Color of the flashing brake lights
-#define CENTER_FLASH_COLOUR CRGB(200, 0, 0) // Color of the flashing brake lights
+#define BACKLIGHT_COLOUR CRGB(10, 0, 0) // Dim red for the background
+#define FLASHLIGHT_COLOUR CRGB(200, 200, 200) // white
+#define FLASH_COLOUR CRGB(255, 0, 0) // Colour when the entire brake is flashing
+#define CENTER_FLASH_COLOUR CRGB(200, 0, 0) // Colour when the center is flashing
 
 #define GLOBAL_BRIGHTNESS 200 // 0-255, this might be broken since it gets overriden
 #define MIN_BRAKE_BRIGHTNESS 75 // 0-255 minimum brightness of the brake when braking
@@ -44,7 +44,7 @@ private:
     int numLEDs; // number of LEDs, from header in main.ino
     int middleIndex; // middle index of the LED strip (+1 since even)  xxxoxx
     
-    void SetSolid(CRGB color);
+    void SetSolid(CRGB colour);
     void FlashCenterLEDs();
 
 public:

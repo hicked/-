@@ -66,6 +66,6 @@ void Signals::LeftSignal() {
     }
 }
 
-void Signals::SetSolid(CRGB color) {
-    fill_solid(this->LEDStrip, this->numLEDs, color);
+void Signals::SetSolid(CRGB colour) {
+    fill_solid(this->LEDStrip, this->numLEDs, colour);
 }

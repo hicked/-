@@ -12,12 +12,12 @@ void Brake::Update() {
     unsigned long currentTime = millis();
 
     if (this->blind) {
-        this->SetSolid(BLIND_COLOR);
+        this->SetSolid(FLASHLIGHT_COLOUR);
         return;
     }
 
 
-    this->SetSolid(BACKLIGHT_COLOR);
+    this->SetSolid(BACKLIGHT_COLOUR);
 
     this->brakeON = !digitalRead(BRAKE_PIN);
 
@@ -100,13 +100,13 @@ void Brake::FlashRedLEDs() { // Flashing of the entire LED strip
             this->SetSolid(FLASH_COLOUR); // Flash red
             this->flashCount--;
         } else {
-            this->SetSolid(BACKLIGHT_COLOR); // Reset to background
+            this->SetSolid(BACKLIGHT_COLOUR); // Reset to background
         }
     }
 }
 
-void Brake::SetSolid(CRGB color) {
-    fill_solid(this->LEDStrip, this->numLEDs, color);
+void Brake::SetSolid(CRGB colour) {
+    fill_solid(this->LEDStrip, this->numLEDs, colour);
 }
 
 void Brake::MarioStar() {
