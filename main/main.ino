@@ -4,6 +4,7 @@
 #include "brake.h"
 #include "signals.h"
 #include "gyro.h"
+#include "button.h"
 
 #define LED_DATA_PIN_1 4
 #define LED_DATA_PIN_2 5
@@ -15,7 +16,8 @@ CRGB leds[NUM_LEDS];
 
 Gyro *gyro;
 Brake *brake;
-Signals signals(leds, NUM_LEDS);
+Button *button;
+Signals *signals;
 
 void setup() {
     FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, RGB>(leds, NUM_LEDS);
@@ -33,15 +35,23 @@ void setup() {
     pinMode(RIGHT_SIGNAL_PIN, INPUT_PULLUP);
     pinMode(BRAKE_PIN, INPUT_PULLUP);
 
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+
     // Initialize objects
     gyro = new Gyro();
-    brake = new Brake(&signals, leds, gyro, NUM_LEDS);
+    button = new Button();
+    signals = new Signals(leds, NUM_LEDS);
+    brake = new Brake(signals, leds, gyro, button, NUM_LEDS);
     Serial.println("Setup complete");
 }
 
 
 void loop() {
     gyro->Update(); // Updates the value of smoothedAcc
+    button->Update(); // Updates the button mode
+
+    Serial.println(button->state);
+    Serial.println(button->mode);
 
     // Update the number of active LEDs and brightness of the brake lights
     if (gyro->smoothedAcc > 0) { // accelerating
@@ -57,12 +67,12 @@ void loop() {
     }
 
     if (SHOW_MARIO && gyro->smoothedAcc > MAX_GYRO_ACCELERATING) {
-        brake->MarioStar();
-        signals.Update(); // signals on top of mario star
+        brake->MarioStarMode();
+        signals->Update(); // signals on top of mario star
     }
     else if (brake->flashCount == 0) {
         brake->Update();
-        signals.Update(); // signals on top of brake lighting
+        signals->Update(); // signals on top of brake lighting
     }  
     else { // handled outside brake.update() since we want it to go OVER the turn signals, while normal brake lights go UNDER signals
         brake->FlashRedLEDs();

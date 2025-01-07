@@ -1,5 +1,6 @@
 #pragma once
-#include <FastLED.h>
+#include <FastLED.h> // 3.9.9
+#include <Arduino.h>
 #include "brake.h"
 
 #define LEFT_SIGNAL_PIN 9
