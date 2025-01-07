@@ -44,8 +44,8 @@ private:
     unsigned long timeSinceLastIniBraking = 0; // time since last initialized braking
 
     unsigned long lastMarioTime = 0; // time of the last rainbow
-    unsigned long lastChristmasTime = 0; // time of the last christmas
-    unsigned long lastHalloweenTime = 0; // time of the last halloween
+    unsigned long lastPatternTime = 0;
+    unsigned long lastMarqueeTime = 0;
 
     int numLEDs; // number of LEDs, from header in main.ino
     int middleIndex; // middle index of the LED strip (+1 since even)  xxxoxx
@@ -70,4 +70,6 @@ public:
     void ChristmasMode(); // show christmas lights on the brake lights
     void HalloweenMode(); // show halloween lights on the brake lights
     void FlashlightMode(); // show flashlight on the brake lights
+    void ShiftPatternMode(CRGB colors[], int numColors, unsigned long speed, int size);
+    void MarqueeEffect(CRGB* colors, int numColors, int speed, float blend);
 };

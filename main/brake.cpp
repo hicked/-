@@ -14,20 +14,21 @@ Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, Button *button, int num_le
 void Brake::Update() {
     unsigned long currentTime = millis();
 
-    if (this->button->mode == BRAKE_MODE_MARIO_STAR) {
-        this->MarioStarMode();
-        return;
-    } else if (this->button->mode == BRAKE_MODE_CHRISTMAS) {
-        this->ChristmasMode();
-        return;
-    } else if (this->button->mode == BRAKE_MODE_HALLOWEEN) {
-        this->HalloweenMode();
-        return;
-    } else if (this->button->mode == BRAKE_MODE_FLASHLIGHT) {
-        this->FlashlightMode();
-        return;
+    if (BUTTON_ENABLED) {
+        if (this->button->mode == BRAKE_MODE_MARIO_STAR) {
+            this->MarioStarMode();
+            return;
+        } else if (this->button->mode == BRAKE_MODE_CHRISTMAS) {
+            this->ChristmasMode();
+            return;
+        } else if (this->button->mode == BRAKE_MODE_HALLOWEEN) {
+            this->HalloweenMode();
+            return;
+        } else if (this->button->mode == BRAKE_MODE_FLASHLIGHT) {
+            this->FlashlightMode();
+            return;
+        }
     }
-
 
     this->SetSolid(BACKLIGHT_COLOUR);
 
@@ -123,82 +124,98 @@ void Brake::SetSolid(CRGB colour) {
 
 
 void Brake::MarioStarMode() {
-    int shift = 0; // Tracks the current position of the marquee
-    unsigned long currentTime = millis();
-
-    if (currentTime - this->lastMarioTime >= 10) { 
-        this->lastMarioTime = currentTime;
-
-        // Clear all LEDs first (optional but ensures clean transitions)
-        fill_solid(this->LEDStrip, this->numLEDs, CRGB::Black);
-        for (int i = 0; i < this->numLEDs; i++) {
-            // Calculate the position of the lit LED in the marquee
-            int effectiveIndex = (shift + i) % this->numLEDs;
-            this->LEDStrip[effectiveIndex] = CHSV((i * 256 / this->numLEDs + currentTime / 10) % 256, 255, MAX_BRAKE_BRIGHTNESS);
-        }
-        shift = (shift + 1) % this->numLEDs;
-    }
+    CRGB colors[] = {CRGB::Yellow, CRGB::Red, CRGB::Blue, CRGB::Green}; // List of colors
+    MarqueeEffect(colors, 4, 50, 5); // Speed of 50ms and brightness of 200()
 }
 
 void Brake::ChristmasMode() {
-    unsigned long currentTime = millis();
-
-    if (currentTime - this->lastChristmasTime >= 100) { // Update every 100ms (adjust for speed)
-        this->lastChristmasTime = currentTime;
-
-        static int shift = 0; // Tracks the current shift of the pattern
-
-        for (int i = 0; i < this->numLEDs; i++) {
-            // Calculate the position of the current LED, wrapping around the strip
-            int effectiveIndex = (i + shift) % this->numLEDs;
-            
-            // Determine the color based on the effective index
-            int segment = (effectiveIndex / 5) % 3; // Divide into groups of 5 LEDs
-
-            if (segment == 0) {
-                this->LEDStrip[i] = CRGB::Blue; // First segment is Blue
-            } else if (segment == 1) {
-                this->LEDStrip[i] = CRGB::Red; // Second segment is Red
-            } else {
-                this->LEDStrip[i] = CRGB::Green; // Third segment is Green
-            }
-        }
-
-        // Shift the pattern smoothly
-        shift = (shift + 1) % this->numLEDs; // Wrap every full cycle (length of one complete pattern)
-    }
+    CRGB colors[] = { CRGB::Blue, CRGB::Red, CRGB::Green };
+    ShiftPatternMode(colors, 3, 100, 5); // 100ms update, 5 LEDs per segment
 }
 
 
 // Halloween mode: Alternating orange and purple
 void Brake::HalloweenMode() {
+    CRGB colors[] = { CRGB::Purple, CRGB::Orange, CRGB::Black };
+    ShiftPatternMode(colors, 3, 100, 5); // 100ms update, 5 LEDs per segment
+}
+
+
+void Brake::ShiftPatternMode(CRGB colors[], int numColors, unsigned long speed, int size) {
     unsigned long currentTime = millis();
 
-    if (currentTime - this->lastHalloweenTime >= 100) { // Update every 100ms (adjust for speed)
-        this->lastHalloweenTime = currentTime;
+    // Check if enough time has passed to update the pattern
+    if (currentTime - this->lastPatternTime >= speed) {
+        this->lastPatternTime = currentTime;
 
         static int shift = 0; // Tracks the current shift of the pattern
 
         for (int i = 0; i < this->numLEDs; i++) {
             // Calculate the position of the current LED, wrapping around the strip
             int effectiveIndex = (i + shift) % this->numLEDs;
-            
-            // Determine the color based on the effective index
-            int segment = (effectiveIndex / 5) % 3; // Divide into groups of 5 LEDs
 
-            if (segment == 0) {
-                this->LEDStrip[i] = CRGB::Purple; // First segment is Purple
-            } else if (segment == 1) {
-                this->LEDStrip[i] = CRGB::Orange; // Second segment is Orange
-            } else {
-                this->LEDStrip[i] = CRGB::Black; // Third segment is Black
-            }
+            // Determine the color based on the effective index and segment size
+            int segment = (effectiveIndex / size) % numColors; // Divide into groups of 'size' LEDs and cycle through 'numColors'
+
+            // Set the color for the current LED
+            this->LEDStrip[i] = colors[segment];
         }
 
         // Shift the pattern smoothly
         shift = (shift + 1) % this->numLEDs; // Wrap every full cycle (length of one complete pattern)
     }
 }
+
+void Brake::MarqueeEffect(CRGB* colors, int numColors, int speed, float blend) {
+    unsigned long currentTime = millis();
+
+    // Check if enough time has passed to update the marquee
+    if (currentTime - this->lastMarqueeTime >= speed) {
+        this->lastMarqueeTime = currentTime;
+
+        // Clear all LEDs first (optional but ensures clean transitions)
+        fill_solid(this->LEDStrip, this->numLEDs, CRGB::Black);
+
+        static int shift = 0; // The position of the marquee
+        static int colorIndex = 0; // The current color in the array
+        static float colorBlendProgress = 0.0f; // Incremental step to smoothly blend between colors
+
+        // Iterate over the LEDs
+        for (int i = 0; i < this->numLEDs; i++) {
+            // Calculate the effective index of the current LED (shifted)
+            int effectiveIndex = (i + shift) % this->numLEDs;
+
+            // Calculate the position within the color array (looping through colors)
+            int nextColorIndex = (colorIndex + 1) % numColors;
+
+            // Interpolate between two neighboring colors using the colorBlendProgress value
+            CRGB startColor = colors[colorIndex];
+            CRGB endColor = colors[nextColorIndex];
+            float blendFactor = (float)(i + colorBlendProgress) / this->numLEDs;
+
+            // Blending the colors from startColor to endColor
+            CRGB blendedColor = blend(startColor, endColor, blendFactor);
+
+            // Apply the blendAmount to control the intensity of the color blending
+            blendedColor.fadeToBlackBy((1.0f - blendAmount) * 255);
+
+            // Set the LED to the blended color
+            this->LEDStrip[effectiveIndex] = blendedColor;
+        }
+
+        // Update colorBlendProgress to smoothly transition through colors
+        colorBlendProgress += blendAmount; // Controls the speed of color transition
+        if (colorBlendProgress >= 1.0f) {
+            colorBlendProgress = 0.0f; // Reset to start a new transition
+            colorIndex = (colorIndex + 1) % numColors; // Move to the next color
+        }
+
+        // Shift the marquee smoothly from left to right
+        shift = (shift + 1) % this->numLEDs;
+    }
+}
+
+
 
 void Brake::FlashlightMode() {
     fill_solid(this->LEDStrip, this->numLEDs, FLASHLIGHT_COLOUR);

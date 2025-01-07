@@ -1,6 +1,8 @@
 #pragma once
 #include <Arduino.h>
+
 #define BUTTON_PIN 8 // Pin for the button
+#define BUTTON_ENABLED true
 
 enum BrakeMode {
     BRAKE_MODE_NORMAL,
@@ -8,7 +10,7 @@ enum BrakeMode {
     BRAKE_MODE_CHRISTMAS,
     BRAKE_MODE_HALLOWEEN,
     BRAKE_MODE_MARIO_STAR,
-    
+
     BRAKE_MODE_NUM_MODES
 };
 
