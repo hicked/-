@@ -1,8 +1,8 @@
 #include "Brake.h"
 
-Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, Button *button, int num_leds) {
+Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, Button *button, int numLEDs) {
     this->LEDStrip = leds;
-    this->numLEDs = num_leds;
+    this->numLEDs = numLEDs;
     this->signals = signal;
     this->gyro = gyro;
     this->button = button;
