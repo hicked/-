@@ -50,8 +50,15 @@ private:
     int numLEDs; // number of LEDs, from header in main.ino
     int middleIndex; // middle index of the LED strip (+1 since even)  xxxoxx
     
-    void SetSolid(CRGB colour);
-    void FlashCenterLEDs();
+    void setSolid(CRGB colour); // set the entire LED strip to a single color
+    void flashCenterLEDs(); // flash the center LEDs
+    void dynamicBrakeMode(); // show brake lights based on how hard you brake
+    void christmasMode(); // show christmas lights on the brake lights
+    void halloweenMode(); // show halloween lights on the brake lights
+    void flashlightMode(); // show flashlight on the brake lights
+
+    void shiftPatternMode(CRGB colors[], int numColors, unsigned long speed, int size);
+    void marqueeEffect(CRGB* colors, int numColors, int speed, float blend);
 
 public:
     bool initializedBraking = false; // status of the braking
@@ -59,17 +66,12 @@ public:
     int flashCount = 0; // amount of times that the leds need to flash will be reduced by one each time by FlashRedLEDs
     int numActiveLEDs = 0; // number of LEDs from the center that are ON, based on how hard you brake
 
-    bool blind = false;
+    bool flashlight = false;
 
-    bool brakeON = false; // status of the brake based on wire input
+    bool brakeWireInput = false; // status of the brake based on wire input
 
     Brake(Signals *signal, CRGB *leds, Gyro *gyro, Button *button, int num_leds);
-    void Update(); // update the brake lights. numActiveLEDs and active_brightness must be changed externally (main)
-    void FlashRedLEDs(); // flash led strip red based on flashCountS
-    void MarioStarMode(); // show mario star on the brake lights
-    void ChristmasMode(); // show christmas lights on the brake lights
-    void HalloweenMode(); // show halloween lights on the brake lights
-    void FlashlightMode(); // show flashlight on the brake lights
-    void ShiftPatternMode(CRGB colors[], int numColors, unsigned long speed, int size);
-    void MarqueeEffect(CRGB* colors, int numColors, int speed, float blend);
+    void update(); // update the brake lights. numActiveLEDs and active_brightness must be changed externally (main)
+    void flashRedLEDs(); // flash led strip red based on flashCount
+    void marioStarMode(); // show mario star on the brake lights
 };

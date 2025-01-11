@@ -11,43 +11,60 @@ Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, Button *button, int numLED
     fill_solid(this->LEDStrip, this->numLEDs, CRGB::Black);
 }
 
-void Brake::Update() {
+void Brake::update() {
     unsigned long currentTime = millis();
+    this->brakeWireInput = !digitalRead(BRAKE_PIN);
+    this->setSolid(BACKLIGHT_COLOUR); // Reset to background
 
-    if (BUTTON_ENABLED) {
-        if (this->button->mode == BRAKE_MODE_MARIO_STAR) {
-            this->MarioStarMode();
-            return;
-        } else if (this->button->mode == BRAKE_MODE_CHRISTMAS) {
-            this->ChristmasMode();
-            return;
-        } else if (this->button->mode == BRAKE_MODE_HALLOWEEN) {
-            this->HalloweenMode();
-            return;
-        } else if (this->button->mode == BRAKE_MODE_FLASHLIGHT) {
-            this->FlashlightMode();
-            return;
-        }
+    // Emergency braking detected
+    if (gyro->smoothedAcc < -MAX_GYRO_BREAKING && flashCount == 0) {
+        flashCount++; // continuously adds one or flashes forever
     }
 
-    this->SetSolid(BACKLIGHT_COLOUR);
+    // Initialization of braking detected
+    else if (gyro->prevAcc >= -MIN_GYRO_BREAKING && millis() - this->timeSinceLastIniBraking > TIME_BETWEEN_INI_BRAKE) {
+        timeSinceLastIniBraking = millis();
+        flashCount = INITIALIZE_BRAKING_FLASH_LENGTH;
+    }
 
-    this->brakeON = !digitalRead(BRAKE_PIN);
 
+
+    if (this->button->mode == BRAKE_MODE_MARIO_STAR) {
+        this->marioStarMode();
+        return;
+    } else if (this->button->mode == BRAKE_MODE_CHRISTMAS) {
+        this->christmasMode();
+        return;
+    } else if (this->button->mode == BRAKE_MODE_HALLOWEEN) {
+        this->halloweenMode();
+        return;
+    } else if (this->button->mode == BRAKE_MODE_FLASHLIGHT) {
+        this->flashlightMode();
+        return;
+    }
+    else if (this->button->mode == BRAKE_MODE_STATIC) {
+        if (gyro->smoothedAcc < -MIN_GYRO_BREAKING || this->brakeWireInput) {
+            if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) {
+                this->setSolid(CRGB(this->active_brightness, 0, 0)); // Red brake color
+                this->flashCenterLEDs();
+            }
+            else if (gyro->smoothedAcc > MIN_GYRO_ACCELERATING && SHOW_ACCEL) {
+                this->setSolid(CRGB(0, this->active_brightness, 0)); // Green brake color
+            }
+        } 
+    }
+    else if (this->button->mode == BRAKE_MODE_DYNAMIC) {
+        if (gyro->smoothedAcc < -MIN_GYRO_BREAKING || this->brakeWireInput) {
+            this->dynamicBrakeMode();
+        }
+    }
+}
+
+
+void Brake::dynamicBrakeMode() {
     if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) { // breaking
         // Flash the LEDs in the center
-        this->FlashCenterLEDs();
-
-        // Emergency braking detected
-        if (gyro->smoothedAcc < -MAX_GYRO_BREAKING && flashCount == 0) {
-            flashCount++; // continuously adds one or flashes forever
-        }
-
-        // Initialization of braking detected
-        else if (gyro->prevAcc >= -MIN_GYRO_BREAKING && millis() - this->timeSinceLastIniBraking > TIME_BETWEEN_INI_BRAKE) {
-            timeSinceLastIniBraking = millis();
-            flashCount = INITIALIZE_BRAKING_FLASH_LENGTH;
-        }
+        this->flashCenterLEDs();
 
         // If signals on, use static braking (not progressive)
         if (signals->left || signals->right) {
@@ -82,8 +99,7 @@ void Brake::Update() {
     }
 }
 
-
-void Brake::FlashCenterLEDs() { // Flashing of the center LEDs
+void Brake::flashCenterLEDs() { // Flashing of the center LEDs
     unsigned long currentTime = millis();
     // If the time since the last flash is greater than the delay betweem flashes
     if (currentTime - this->lastCenterFlashTime >= CENTER_FLASH_SPEED) {
@@ -102,7 +118,7 @@ void Brake::FlashCenterLEDs() { // Flashing of the center LEDs
     }
 }
 
-void Brake::FlashRedLEDs() { // Flashing of the entire LED strip
+void Brake::flashRedLEDs() { // Flashing of the entire LED strip
     unsigned long currentTime = millis();
 
     if (currentTime - this->lastFlashTime >= FLASH_SPEED) {
@@ -110,38 +126,38 @@ void Brake::FlashRedLEDs() { // Flashing of the entire LED strip
         this->flashON = !this->flashON;
 
         if (this->flashON) {
-            this->SetSolid(FLASH_COLOUR); // Flash red
+            this->setSolid(FLASH_COLOUR); // Flash red
             this->flashCount--;
         } else {
-            this->SetSolid(BACKLIGHT_COLOUR); // Reset to background
+            this->setSolid(BACKLIGHT_COLOUR); // Reset to background
         }
     }
 }
 
-void Brake::SetSolid(CRGB colour) {
+void Brake::setSolid(CRGB colour) {
     fill_solid(this->LEDStrip, this->numLEDs, colour);
 }
 
 
-void Brake::MarioStarMode() {
+void Brake::marioStarMode() {
     CRGB colors[] = {CRGB::Yellow, CRGB::Red, CRGB::Blue, CRGB::Green}; // List of colors
-    MarqueeEffect(colors, 4, 50, 5); // Speed of 50ms and brightness of 200()
+    marqueeEffect(colors, 4, 50, 5); // Speed of 50ms and brightness of 200()
 }
 
-void Brake::ChristmasMode() {
+void Brake::christmasMode() {
     CRGB colors[] = { CRGB::Blue, CRGB::Red, CRGB::Green };
-    ShiftPatternMode(colors, 3, 100, 5); // 100ms update, 5 LEDs per segment
+    shiftPatternMode(colors, 3, 100, 5); // 100ms update, 5 LEDs per segment
 }
 
 
 // Halloween mode: Alternating orange and purple
-void Brake::HalloweenMode() {
+void Brake::halloweenMode() {
     CRGB colors[] = { CRGB::Purple, CRGB::Orange, CRGB::Black };
-    ShiftPatternMode(colors, 3, 100, 5); // 100ms update, 5 LEDs per segment
+    shiftPatternMode(colors, 3, 100, 5); // 100ms update, 5 LEDs per segment
 }
 
 
-void Brake::ShiftPatternMode(CRGB colors[], int numColors, unsigned long speed, int size) {
+void Brake::shiftPatternMode(CRGB colors[], int numColors, unsigned long speed, int size) {
     unsigned long currentTime = millis();
 
     // Check if enough time has passed to update the pattern
@@ -166,7 +182,7 @@ void Brake::ShiftPatternMode(CRGB colors[], int numColors, unsigned long speed, 
     }
 }
 
-void Brake::MarqueeEffect(CRGB* colors, int numColors, int speed, float blend) {
+void Brake::marqueeEffect(CRGB* colors, int numColors, int speed, float blend) {
     unsigned long currentTime = millis();
 
     // Check if enough time has passed to update the marquee
@@ -175,48 +191,9 @@ void Brake::MarqueeEffect(CRGB* colors, int numColors, int speed, float blend) {
 
         // Clear all LEDs first (optional but ensures clean transitions)
         fill_solid(this->LEDStrip, this->numLEDs, CRGB::Black);
-
-        static int shift = 0; // The position of the marquee
-        static int colorIndex = 0; // The current color in the array
-        static float colorBlendProgress = 0.0f; // Incremental step to smoothly blend between colors
-
-        // Iterate over the LEDs
-        for (int i = 0; i < this->numLEDs; i++) {
-            // Calculate the effective index of the current LED (shifted)
-            int effectiveIndex = (i + shift) % this->numLEDs;
-
-            // Calculate the position within the color array (looping through colors)
-            int nextColorIndex = (colorIndex + 1) % numColors;
-
-            // Interpolate between two neighboring colors using the colorBlendProgress value
-            CRGB startColor = colors[colorIndex];
-            CRGB endColor = colors[nextColorIndex];
-            float blendFactor = (float)(i + colorBlendProgress) / this->numLEDs;
-
-            // Blending the colors from startColor to endColor
-            CRGB blendedColor = blend(startColor, endColor, blendFactor);
-
-            // Apply the blendAmount to control the intensity of the color blending
-            blendedColor.fadeToBlackBy((1.0f - blendAmount) * 255);
-
-            // Set the LED to the blended color
-            this->LEDStrip[effectiveIndex] = blendedColor;
-        }
-
-        // Update colorBlendProgress to smoothly transition through colors
-        colorBlendProgress += blendAmount; // Controls the speed of color transition
-        if (colorBlendProgress >= 1.0f) {
-            colorBlendProgress = 0.0f; // Reset to start a new transition
-            colorIndex = (colorIndex + 1) % numColors; // Move to the next color
-        }
-
-        // Shift the marquee smoothly from left to right
-        shift = (shift + 1) % this->numLEDs;
     }
 }
 
-
-
-void Brake::FlashlightMode() {
+void Brake::flashlightMode() {
     fill_solid(this->LEDStrip, this->numLEDs, FLASHLIGHT_COLOUR);
 }

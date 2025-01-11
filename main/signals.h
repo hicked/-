@@ -24,15 +24,14 @@ private:
     int numLEDs;
     int numActiveLEDs = 0;
 
-    void LeftSignal();
-    void RightSignal();
-    void SetSolid(CRGB colour);
+    void leftSignal();
+    void rightSignal();
 
 public:
     bool left = false;
     bool right = false;
 
     Signals(CRGB *leds, int num_leds);
-    void Update();
-    void UpdateStates();
+    void update();
+    void updateStates();
 };

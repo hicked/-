@@ -47,8 +47,8 @@ void setup() {
 
 
 void loop() {
-    gyro->Update(); // Updates the value of smoothedAcc
-    button->Update(); // Updates the button mode
+    gyro->update(); // Updates the value of smoothedAcc
+    button->update(); // Updates the button mode
 
     Serial.println(button->state);
     Serial.println(button->mode);
@@ -62,20 +62,20 @@ void loop() {
         brake->active_brightness = constrain(map(-(gyro->smoothedAcc), MIN_GYRO_BREAKING, MAX_GYRO_BREAKING, MIN_BRAKE_BRIGHTNESS, MAX_BRAKE_BRIGHTNESS), 0, MAX_BRAKE_BRIGHTNESS);
     }
 
-    if (abs(gyro->smoothedAcc - EXPECTED_ACC_MAGNITUDE) < 1000 && brake->brakeON) { // at rest, brake activated
+    if (abs(gyro->smoothedAcc - EXPECTED_ACC_MAGNITUDE) < 1000 && brake->brakeWireInput) { // at rest, brake activated
         brake->numActiveLEDs = NUM_LEDS/2-1;
     }
 
     if (SHOW_MARIO && gyro->smoothedAcc > MAX_GYRO_ACCELERATING) {
-        brake->MarioStarMode();
-        signals->Update(); // signals on top of mario star
+        brake->marioStarMode();
+        signals->update(); // signals on top of mario star
     }
     else if (brake->flashCount == 0) {
-        brake->Update();
-        signals->Update(); // signals on top of brake lighting
+        brake->update();
+        signals->update(); // signals on top of brake lighting
     }  
     else { // handled outside brake.update() since we want it to go OVER the turn signals, while normal brake lights go UNDER signals
-        brake->FlashRedLEDs();
+        brake->flashRedLEDs();
     }
     
     FastLED.show();

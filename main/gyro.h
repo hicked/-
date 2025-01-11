@@ -64,5 +64,5 @@ public:
     float prevAcc = 0.0; // previous corrected acceleration, used to filter out bumps
     float smoothedAcc = 0.0; // smoothed out acceleration for dealing with bumps and irregularities, signed
     Gyro();
-    void Update();
+    void update();
 };

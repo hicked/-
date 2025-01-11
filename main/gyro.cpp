@@ -54,7 +54,7 @@ Gyro::Gyro() {
     this->lastUpdateTime = millis(); // Initialize the last update time
 }
 
-void Gyro::Update() {
+void Gyro::update() {
     Wire.beginTransmission(MPU);
     Wire.write(0x3B);  
     Wire.endTransmission(false);
@@ -138,7 +138,12 @@ void Gyro::Update() {
         // Serial.print("Avg: ");
         // Serial.println(this->avgAcc);
 
-        this->smoothedAcc = this->smoothedAcc * (1 - SMOOTHING_FACTOR) + this->correctedAcc * SMOOTHING_FACTOR;
+        if (FILTER_SMOOTHING) {
+            // Smooth the acceleration using a low-pass filter
+            this->smoothedAcc = this->smoothedAcc * (1 - SMOOTHING_FACTOR) + this->avgAcc * SMOOTHING_FACTOR;
+        } else {
+            this->smoothedAcc = this->avgAcc;
+        }
 
         // Update previous corrected acceleration and timestamp and reset the sample data
         this->numSamples = 0;

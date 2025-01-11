@@ -5,10 +5,10 @@ Signals::Signals(CRGB *leds, int num_leds) {
     this->numLEDs = num_leds;
 }
 
-void Signals::Update() {
+void Signals::update() {
     unsigned long currentTime = millis();
 
-    this->UpdateStates();
+    this->updateStates();
     if (this->numActiveLEDs < SIGNAL_LENGTH && currentTime - lastSignalUpdate > SIGNAL_SPEED && (this->left || this->right)) {
         lastSignalUpdate = currentTime;
         this->numActiveLEDs++;
@@ -20,17 +20,17 @@ void Signals::Update() {
     }
 
     if (left) {
-        LeftSignal();
+        leftSignal();
     } 
     if (right) {
-        RightSignal();
+        rightSignal();
     }
     if (!right && !left) {
         this->numActiveLEDs = 0;
     }
 }
 
-void Signals::UpdateStates() {
+void Signals::updateStates() {
     // Left turn signal
     if (!digitalRead(LEFT_SIGNAL_PIN)) {
         this->left = true;
@@ -48,7 +48,7 @@ void Signals::UpdateStates() {
     }
 }
 
-void Signals::RightSignal() {
+void Signals::rightSignal() {
     int startIndex = numLEDs / 2 + (numLEDs / 2 - SIGNAL_LENGTH);
 
     for (int i = 0; i < numActiveLEDs; i++) {
@@ -57,15 +57,11 @@ void Signals::RightSignal() {
     }
 }
 
-void Signals::LeftSignal() {
+void Signals::leftSignal() {
     int startIndex = numLEDs / 2 - (numLEDs / 2 - SIGNAL_LENGTH) - 1;
 
     for (int i = 0; i < numActiveLEDs; i++) {
         FastLED.setBrightness(255);
         LEDStrip[startIndex-i] = SIGNAL_COLOUR; 
     }
-}
-
-void Signals::SetSolid(CRGB colour) {
-    fill_solid(this->LEDStrip, this->numLEDs, colour);
 }

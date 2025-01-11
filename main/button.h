@@ -4,20 +4,23 @@
 #define BUTTON_PIN 8 // Pin for the button
 #define BUTTON_ENABLED true
 
-enum BrakeMode {
-    BRAKE_MODE_NORMAL,
-    BRAKE_MODE_FLASHLIGHT,
-    BRAKE_MODE_CHRISTMAS,
-    BRAKE_MODE_HALLOWEEN,
-    BRAKE_MODE_MARIO_STAR,
+#define DEFAULT_MODE BRAKE_MODE_DYNAMIC
 
-    BRAKE_MODE_NUM_MODES
+enum BrakeMode {
+    BRAKE_MODE_STATIC, // Brake lights are all on when braking
+    BRAKE_MODE_DYNAMIC, // Brake lights are on based on how hard you brake
+    BRAKE_MODE_FLASHLIGHT, // Flashlight mode
+    BRAKE_MODE_CHRISTMAS, // Christmas mode
+    BRAKE_MODE_HALLOWEEN, // Halloween mode
+    BRAKE_MODE_MARIO_STAR, // Mario star mode
+
+    BRAKE_MODE_NUM_MODES // Placeholder DO NOT REMOVE, SHOULD ALWAYS BE LAST
 };
 
 class Button {
 public:
     bool state = false;
     bool prevState = false;
-    int mode = 0;
-    void Update();
+    int mode = DEFAULT_MODE;
+    void update();
 };
