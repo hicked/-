@@ -14,7 +14,6 @@ Brake::Brake(Signals *signal, CRGB *leds, Gyro *gyro, Button *button, int numLED
 void Brake::update() {
     unsigned long currentTime = millis();
     this->brakeWireInput = !digitalRead(BRAKE_PIN);
-    this->setSolid(BACKLIGHT_COLOUR); // Reset to background
 
     // Emergency braking detected
     if (gyro->smoothedAcc < -MAX_GYRO_BREAKING && flashCount == 0) {
@@ -29,16 +28,15 @@ void Brake::update() {
 
     if (this->button->mode == BRAKE_MODE_MARIO_STAR) {
         this->marioStarMode();
-        return;
-    } else if (this->button->mode == BRAKE_MODE_CHRISTMAS) {
+    } 
+    else if (this->button->mode == BRAKE_MODE_CHRISTMAS) {
         this->christmasMode();
-        return;
-    } else if (this->button->mode == BRAKE_MODE_HALLOWEEN) {
+    } 
+    else if (this->button->mode == BRAKE_MODE_HALLOWEEN) {
         this->halloweenMode();
-        return;
-    } else if (this->button->mode == BRAKE_MODE_FLASHLIGHT) {
+    } 
+    else if (this->button->mode == BRAKE_MODE_FLASHLIGHT) {
         this->flashlightMode();
-        return;
     }
     else if (this->button->mode == BRAKE_MODE_STATIC) {
         this->staticBrakeMode();
@@ -50,6 +48,7 @@ void Brake::update() {
 
 
 void Brake::dynamicBrakeMode() {
+    this->setSolid(BACKLIGHT_COLOUR); // Reset to background
     if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) { // breaking
         // Flash the LEDs in the center
         this->flashCenterLEDs();
@@ -88,6 +87,7 @@ void Brake::dynamicBrakeMode() {
 }
 
 void Brake::staticBrakeMode(){
+    this->setSolid(BACKLIGHT_COLOUR); // Reset to background
     if (gyro->smoothedAcc < -MIN_GYRO_BREAKING || this->brakeWireInput) {
         if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) {
             this->setSolid(CRGB(this->active_brightness, 0, 0)); // Red brake color
@@ -135,25 +135,27 @@ void Brake::flashRedLEDs() { // Flashing of the entire LED strip
 }
 
 void Brake::setSolid(CRGB colour) {
-    fill_solid(this->LEDStrip, this->numLEDs, colour);
+    for (int i=0; i<this->numLEDs; i++) {
+        this->LEDStrip[i] = colour;
+    }
 }
 
 
 void Brake::marioStarMode() {
     CRGB colors[] = {CRGB::Yellow, CRGB::Red, CRGB::Blue, CRGB::Green}; // List of colors
-    marqueeEffect(colors, 4, 50, 5); // Speed of 50ms and brightness of 200()
+    marqueeEffect(colors, 4, 50, 10); // Speed of 50ms and brightness of 200()
 }
 
 void Brake::christmasMode() {
     CRGB colors[] = { CRGB::Blue, CRGB::Red, CRGB::Green };
-    shiftPatternMode(colors, 3, 100, 5); // 100ms update, 5 LEDs per segment
+    shiftPatternMode(colors, 3, 100, 10); // 100ms update, 5 LEDs per segment
 }
 
 
 // Halloween mode: Alternating orange and purple
 void Brake::halloweenMode() {
     CRGB colors[] = { CRGB::Purple, CRGB::Orange, CRGB::Black };
-    shiftPatternMode(colors, 3, 100, 5); // 100ms update, 5 LEDs per segment
+    shiftPatternMode(colors, 3, 100, 10); // 100ms update, 5 LEDs per segment
 }
 
 
@@ -167,20 +169,21 @@ void Brake::shiftPatternMode(CRGB colors[], int numColors, unsigned long speed, 
         static int shift = 0; // Tracks the current shift of the pattern
 
         for (int i = 0; i < this->numLEDs; i++) {
-            // Calculate the position of the current LED, wrapping around the strip
-            int effectiveIndex = (i + shift) % this->numLEDs;
+            // Calculate the effective position within the pattern
+            int effectiveIndex = (i + shift) % (numColors * size);
 
-            // Determine the color based on the effective index and segment size
-            int segment = (effectiveIndex / size) % numColors; // Divide into groups of 'size' LEDs and cycle through 'numColors'
+            // Determine the color for the current LED based on the effective position
+            int segment = effectiveIndex / size; // Which segment (color) this LED belongs to
 
             // Set the color for the current LED
             this->LEDStrip[i] = colors[segment];
         }
 
-        // Shift the pattern smoothly
-        shift = (shift + 1) % this->numLEDs; // Wrap every full cycle (length of one complete pattern)
+        // Increment the shift, ensuring it wraps around properly after one full cycle
+        shift = (shift + 1) % (numColors * size);
     }
 }
+
 
 void Brake::marqueeEffect(CRGB* colors, int numColors, int speed, float blend) {
     unsigned long currentTime = millis();
@@ -189,11 +192,41 @@ void Brake::marqueeEffect(CRGB* colors, int numColors, int speed, float blend) {
     if (currentTime - this->lastMarqueeTime >= speed) {
         this->lastMarqueeTime = currentTime;
 
-        // Clear all LEDs first (optional but ensures clean transitions)
-        fill_solid(this->LEDStrip, this->numLEDs, CRGB::Black);
+        static float shift = 0; // Tracks the current shift of the marquee as a floating-point number
+
+        for (int i = 0; i < this->numLEDs; i++) {
+            // Calculate the position within the virtual pattern
+            float effectiveIndex = (i + shift) / this->numLEDs * numColors;
+
+            // Determine the two colors to blend between
+            int color1Index = static_cast<int>(effectiveIndex) % numColors;
+            int color2Index = (color1Index + 1) % numColors;
+
+            // Calculate the blend factor
+            float blendFactor = effectiveIndex - static_cast<int>(effectiveIndex);
+
+            // Blend the two colors
+            this->LEDStrip[i] = blendColors(colors[color1Index], colors[color2Index], blendFactor);
+        }
+
+        // Increment the shift for the marquee effect
+        shift += (1.0f / this->numLEDs); // Smoothly shifts by a fraction of the LED count
+        if (shift >= this->numLEDs) {
+            shift -= this->numLEDs; // Wrap around to prevent overflow
+        }
     }
 }
+
 
 void Brake::flashlightMode() {
     fill_solid(this->LEDStrip, this->numLEDs, FLASHLIGHT_COLOUR);
 }
+
+CRGB Brake::blendColors(CRGB color1, CRGB color2, float factor) {
+    return CRGB(
+        static_cast<uint8_t>(color1.r + factor * (color2.r - color1.r)),
+        static_cast<uint8_t>(color1.g + factor * (color2.g - color1.g)),
+        static_cast<uint8_t>(color1.b + factor * (color2.b - color1.b))
+    );
+}
+

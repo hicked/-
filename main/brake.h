@@ -62,6 +62,7 @@ private:
     void christmasMode(); // show christmas lights on the brake lights
     void halloweenMode(); // show halloween lights on the brake lights
     void flashlightMode(); // show flashlight on the brake lights
+    CRGB blendColors(CRGB color1, CRGB color2, float factor);
 
 public:
     bool initializedBraking = false; // status of the braking
