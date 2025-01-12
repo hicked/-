@@ -27,7 +27,6 @@ void setup() {
 
     // Initialize Serial for debugging
     Serial.begin(115200);
-    Serial.println("Serial initialized");
 
     // Setup pins
     // WILL NEED TO CHANGE THESE TO REGULAR INPUTS LATER
@@ -50,8 +49,8 @@ void loop() {
     gyro->update(); // Updates the value of smoothedAcc
     button->update(); // Updates the button mode
 
-    Serial.println(button->state);
     Serial.println(button->mode);
+    Serial.println(gyro->smoothedAcc);
 
     // Update the number of active LEDs and brightness of the brake lights
     if (gyro->smoothedAcc > 0) { // accelerating

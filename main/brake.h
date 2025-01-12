@@ -50,15 +50,18 @@ private:
     int numLEDs; // number of LEDs, from header in main.ino
     int middleIndex; // middle index of the LED strip (+1 since even)  xxxoxx
     
+    void dynamicBrakeMode(); // show brake lights based on how hard you brake
+    void staticBrakeMode();
+
     void setSolid(CRGB colour); // set the entire LED strip to a single color
     void flashCenterLEDs(); // flash the center LEDs
-    void dynamicBrakeMode(); // show brake lights based on how hard you brake
-    void christmasMode(); // show christmas lights on the brake lights
-    void halloweenMode(); // show halloween lights on the brake lights
-    void flashlightMode(); // show flashlight on the brake lights
 
     void shiftPatternMode(CRGB colors[], int numColors, unsigned long speed, int size);
     void marqueeEffect(CRGB* colors, int numColors, int speed, float blend);
+    
+    void christmasMode(); // show christmas lights on the brake lights
+    void halloweenMode(); // show halloween lights on the brake lights
+    void flashlightMode(); // show flashlight on the brake lights
 
 public:
     bool initializedBraking = false; // status of the braking

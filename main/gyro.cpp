@@ -2,10 +2,13 @@
 #include <Arduino.h>
 #include <math.h>
 
+// SDA = A4
+// SCL = A5
+
 Gyro::Gyro() {
     Wire.begin();
     Wire.beginTransmission(MPU);
-    Wire.write(0x3B);  // 6?
+    Wire.write(0x6B);  
     Wire.write(0);
     Wire.endTransmission(true);
 
@@ -14,8 +17,6 @@ Gyro::Gyro() {
     // Like if it was done while accelerating, so set a conservative amount EXPECTED_ACC_MAGNITUDE
     float sum = 0.0;
     int n = 0;
-    int attempts = 0;
-
     delay(3000);
     while (n < CALIBRATION_SAMPLE_SIZE) {
         Wire.beginTransmission(MPU);
@@ -36,13 +37,7 @@ Gyro::Gyro() {
 
         } else {
             Serial.println("Failed to read from MPU");
-            attempts++;
-            if (attempts < CALIBRATION_SAMPLE_SIZE) {
-                continue;
-            }
-            else {
-                break;
-            }
+            continue;
         }
         delay(5);
     }
@@ -139,9 +134,9 @@ void Gyro::update() {
         // Serial.println(this->avgAcc);
 
         if (FILTER_SMOOTHING) {
-            // Smooth the acceleration using a low-pass filter
-            this->smoothedAcc = this->smoothedAcc * (1 - SMOOTHING_FACTOR) + this->avgAcc * SMOOTHING_FACTOR;
-        } else {
+            this->smoothedAcc = this->smoothedAcc * (1 - SMOOTHING_FACTOR) + this->correctedAcc * SMOOTHING_FACTOR;
+        }
+        else {
             this->smoothedAcc = this->avgAcc;
         }
 
@@ -151,7 +146,7 @@ void Gyro::update() {
         this->sumSamples = 0.0;
 
         lastUpdateTime = millis();
-        // Serial.print("Acc: ");
-        // Serial.println(this->smoothedAcc);
+        Serial.print("Acc: ");
+        Serial.println(this->smoothedAcc);
     }
 }

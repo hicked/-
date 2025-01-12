@@ -22,12 +22,10 @@ void Brake::update() {
     }
 
     // Initialization of braking detected
-    else if (gyro->prevAcc >= -MIN_GYRO_BREAKING && millis() - this->timeSinceLastIniBraking > TIME_BETWEEN_INI_BRAKE) {
+    else if (gyro->smoothedAcc < -MIN_GYRO_BREAKING && gyro->prevAcc >= -MIN_GYRO_BREAKING && millis() - this->timeSinceLastIniBraking > TIME_BETWEEN_INI_BRAKE) {
         timeSinceLastIniBraking = millis();
         flashCount = INITIALIZE_BRAKING_FLASH_LENGTH;
     }
-
-
 
     if (this->button->mode == BRAKE_MODE_MARIO_STAR) {
         this->marioStarMode();
@@ -43,20 +41,10 @@ void Brake::update() {
         return;
     }
     else if (this->button->mode == BRAKE_MODE_STATIC) {
-        if (gyro->smoothedAcc < -MIN_GYRO_BREAKING || this->brakeWireInput) {
-            if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) {
-                this->setSolid(CRGB(this->active_brightness, 0, 0)); // Red brake color
-                this->flashCenterLEDs();
-            }
-            else if (gyro->smoothedAcc > MIN_GYRO_ACCELERATING && SHOW_ACCEL) {
-                this->setSolid(CRGB(0, this->active_brightness, 0)); // Green brake color
-            }
-        } 
+        this->staticBrakeMode();
     }
     else if (this->button->mode == BRAKE_MODE_DYNAMIC) {
-        if (gyro->smoothedAcc < -MIN_GYRO_BREAKING || this->brakeWireInput) {
-            this->dynamicBrakeMode();
-        }
+        this->dynamicBrakeMode();
     }
 }
 
@@ -97,6 +85,18 @@ void Brake::dynamicBrakeMode() {
             this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
         }
     }
+}
+
+void Brake::staticBrakeMode(){
+    if (gyro->smoothedAcc < -MIN_GYRO_BREAKING || this->brakeWireInput) {
+        if (gyro->smoothedAcc < -MIN_GYRO_BREAKING) {
+            this->setSolid(CRGB(this->active_brightness, 0, 0)); // Red brake color
+            this->flashCenterLEDs();
+        }
+        else if (gyro->smoothedAcc > MIN_GYRO_ACCELERATING && SHOW_ACCEL) {
+            this->setSolid(CRGB(0, this->active_brightness, 0)); // Green brake color
+        }
+    } 
 }
 
 void Brake::flashCenterLEDs() { // Flashing of the center LEDs
