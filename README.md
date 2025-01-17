@@ -33,9 +33,9 @@ To do this, after downloading the program files, simply open all the files endin
 ![Screenshot 2025-01-05 165439](https://github.com/user-attachments/assets/3c05c40d-e91a-444e-a3c6-27e4b3e6d679)
 
 ## Other Media
-### Hazards
-https://github.com/user-attachments/assets/a8786f55-660a-4991-8c82-4a94363032eb
-
 ### Gyro & Bump Filtering
 https://github.com/user-attachments/assets/aa2e7507-03d2-4963-8b66-d6189a29fe5b
+
+### Signals, Hazards & Center Flash
+https://github.com/user-attachments/assets/a8786f55-660a-4991-8c82-4a94363032eb
 
