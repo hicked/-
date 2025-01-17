@@ -34,8 +34,8 @@ To do this, after downloading the program files, simply open all the files endin
 
 ## Other Media
 ### Hazards
-![VID20241231170116](https://github.com/user-attachments/assets/03d63844-a77f-4636-bbd6-6810d4615508)
+https://github.com/user-attachments/assets/a8786f55-660a-4991-8c82-4a94363032eb
 
-### Bump Filtering
+### Gyro & Bump Filtering
 https://github.com/user-attachments/assets/aa2e7507-03d2-4963-8b66-d6189a29fe5b
 
