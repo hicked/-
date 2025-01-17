@@ -26,23 +26,26 @@ void Brake::update() {
         flashCount = INITIALIZE_BRAKING_FLASH_LENGTH;
     }
 
-    if (this->button->mode == BRAKE_MODE_MARIO_STAR) {
-        this->marioStarMode();
-    } 
-    else if (this->button->mode == BRAKE_MODE_CHRISTMAS) {
-        this->christmasMode();
-    } 
-    else if (this->button->mode == BRAKE_MODE_HALLOWEEN) {
-        this->halloweenMode();
-    } 
-    else if (this->button->mode == BRAKE_MODE_FLASHLIGHT) {
-        this->flashlightMode();
-    }
-    else if (this->button->mode == BRAKE_MODE_STATIC) {
-        this->staticBrakeMode();
-    }
-    else if (this->button->mode == BRAKE_MODE_DYNAMIC) {
-        this->dynamicBrakeMode();
+    switch (this->button->mode) {
+        case BRAKE_MODE_MARIO_STAR:
+            this->marioStarMode();
+            break;
+        case BRAKE_MODE_CHRISTMAS:
+            this->christmasMode();
+            break;
+        case BRAKE_MODE_HALLOWEEN:
+            this->halloweenMode();
+            break;
+        case BRAKE_MODE_FLASHLIGHT:
+            this->flashlightMode();
+            break;
+        case BRAKE_MODE_STATIC:
+            this->staticBrakeMode();
+            break;
+        default:
+            // Default to dynamic brake mode
+            this->dynamicBrakeMode();
+            break;
     }
 }
 
@@ -140,25 +143,6 @@ void Brake::setSolid(CRGB colour) {
     }
 }
 
-
-void Brake::marioStarMode() {
-    CRGB colors[] = {CRGB::Yellow, CRGB::Red, CRGB::Blue, CRGB::Green}; // List of colors
-    marqueeEffect(colors, 4, 50, 10); // Speed of 50ms and brightness of 200()
-}
-
-void Brake::christmasMode() {
-    CRGB colors[] = { CRGB::Blue, CRGB::Red, CRGB::Green };
-    shiftPatternMode(colors, 3, 100, 10); // 100ms update, 5 LEDs per segment
-}
-
-
-// Halloween mode: Alternating orange and purple
-void Brake::halloweenMode() {
-    CRGB colors[] = { CRGB::Purple, CRGB::Orange, CRGB::Black };
-    shiftPatternMode(colors, 3, 100, 10); // 100ms update, 5 LEDs per segment
-}
-
-
 void Brake::shiftPatternMode(CRGB colors[], int numColors, unsigned long speed, int size) {
     unsigned long currentTime = millis();
 
@@ -215,6 +199,23 @@ void Brake::marqueeEffect(CRGB* colors, int numColors, int speed, float blend) {
             shift -= this->numLEDs; // Wrap around to prevent overflow
         }
     }
+}
+
+void Brake::marioStarMode() {
+    CRGB colors[] = {CRGB::Yellow, CRGB::Red, CRGB::Blue, CRGB::Green}; // List of colors
+    marqueeEffect(colors, 4, 50, 10); // Speed of 50ms and brightness of 200()
+}
+
+void Brake::christmasMode() {
+    CRGB colors[] = { CRGB::Blue, CRGB::Red, CRGB::Green };
+    shiftPatternMode(colors, 3, 100, 10); // 100ms update, 5 LEDs per segment
+}
+
+
+// Halloween mode: Alternating orange and purple
+void Brake::halloweenMode() {
+    CRGB colors[] = { CRGB::Purple, CRGB::Orange, CRGB::Black };
+    shiftPatternMode(colors, 3, 100, 10); // 100ms update, 5 LEDs per segment
 }
 
 
