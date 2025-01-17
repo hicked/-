@@ -7,6 +7,9 @@
 #define BRAKE_PIN 11 // Pin for the brake lights
 
 #define BACKLIGHT_COLOUR CRGB(5, 0, 0) // Dim red for the background
+#define ACTIVE_BRAKE_COLOUR CRGB(this->active_brightness, 0, 0) // Bright red for the active brake
+#define ACTIVE_ACC_COLOUR CRGB(0, this->active_brightness, 0) // Green for acceleration
+
 #define FLASHLIGHT_COLOUR CRGB(200, 200, 200) // white
 #define FLASH_COLOUR CRGB(255, 0, 0) // Colour when the entire brake is flashing
 #define CENTER_FLASH_COLOUR CRGB(200, 0, 0) // Colour when the center is flashing
@@ -23,8 +26,8 @@
 
 #define TIME_BETWEEN_INI_BRAKE 3000 // initialization of braking detection can only happen every x milliseconds
 
-#define SHOW_ACCEL true // show acceleration (green)
-#define SHOW_MARIO true // show mario star (rainbow)
+#define SHOW_ACC true // show acceleration (green)
+#define SHOW_CHROMA true // show chroma when accelerating fast (rainbow)
 
 class Signals;
 

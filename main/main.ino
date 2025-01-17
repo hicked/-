@@ -64,7 +64,7 @@ void loop() {
         brake->numActiveLEDs = NUM_LEDS/2-1;
     }
 
-    if (SHOW_MARIO && gyro->smoothedAcc > MAX_GYRO_ACCELERATING) {
+    if (SHOW_CHROMA && gyro->smoothedAcc > MAX_GYRO_ACCELERATING) {
         CRGB colours[] = {CRGB::Red, CRGB::Green, CRGB::Blue};
          // (list of colours, number of colours, speed, blend amount, start from center, reverse direction)
         brake->chromaMode();

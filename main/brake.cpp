@@ -61,8 +61,8 @@ void Brake::dynamicBrakeMode() {
                 int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
                 int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1; 
 
-                this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // red brake color
-                this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
+                this->LEDStrip[index1] = ACTIVE_BRAKE_COLOUR;
+                this->LEDStrip[index2] = ACTIVE_BRAKE_COLOUR;
             }         
         } 
         // Otherwise, use progressive brake lighting
@@ -71,19 +71,19 @@ void Brake::dynamicBrakeMode() {
                 int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
                 int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1; 
 
-                this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // red brake color
-                this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
+                this->LEDStrip[index1] = ACTIVE_BRAKE_COLOUR; // red brake color
+                this->LEDStrip[index2] = ACTIVE_BRAKE_COLOUR;
             }
         }
     } 
     
-    else if (gyro->smoothedAcc > MIN_GYRO_ACCELERATING && SHOW_ACCEL) { // Accelerating
+    else if (gyro->smoothedAcc > MIN_GYRO_ACCELERATING && SHOW_ACC) { // Accelerating
         for (int i = 0; i < this->numActiveLEDs; i++) {
             int index1 = middleIndex + i;
             int index2 = middleIndex - i - 1;
             
-            this->LEDStrip[index1] = CRGB(0, this->active_brightness, 0); // Green brake color
-            this->LEDStrip[index2] = CRGB(0, this->active_brightness, 0);
+            this->LEDStrip[index1] = ACTIVE_ACC_COLOUR; // Green brake color
+            this->LEDStrip[index2] = ACTIVE_ACC_COLOUR;
         }
     }
 }
@@ -96,12 +96,12 @@ void Brake::staticBrakeMode(){
             int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
             int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1; 
 
-            this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // red brake color
-            this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
+            this->LEDStrip[index1] = ACTIVE_BRAKE_COLOUR;
+            this->LEDStrip[index2] = ACTIVE_BRAKE_COLOUR;
         }        
     }
-    else if (gyro->smoothedAcc > MIN_GYRO_ACCELERATING && SHOW_ACCEL) { // accelerating
-        this->setSolid(CRGB(0, this->active_brightness, 0)); // Green brake color
+    else if (gyro->smoothedAcc > MIN_GYRO_ACCELERATING && SHOW_ACC) { // accelerating
+        this->setSolid(ACTIVE_ACC_COLOUR); // Green brake color
     }
 }
 
