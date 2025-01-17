@@ -8,14 +8,26 @@ Date is in YYYY/MM/DD format.
 
 **B**: Minor Feature / Minor Bug Fix
 
-**C**: Refactoring / Tiny Feature
+**C**: Refactoring / Tiny Feature / Patch
 
-**D**: Patch / Very Minor Thing
+
+## [v.2.3.1-beta] - 2024-01-16
+**Author:** Antoine
+-   Added switch cases for button modes
+    -   **Dynamic (lights up progressively)**
+    -   **Static (ON/OFF)** <br><br>
+  
+    -   Christmas
+    -   Halloween
+    -   Chroma
+    -   Flashlight
+> Note, signal and brake inputs are set to `INPUT_PULLUP` for now to ignore noise. These will have to be swapped to `INPUT`. Signals input are also inverted for debugging purposes
+> Also note that, for testing purposes, gyroscope is taking in raw input (gravity is not disregarded)
 
 ## [v.2.2.1-beta] - 2024-01-05
 **Author:** Antoine
 -   Finalized Signals
--   Added blind
+-   Added flashlight
 -   Refactoring
 -   Changed format to RGB
 -   Included circuit diagram and other media
