@@ -148,12 +148,12 @@ void Brake::setSolid(CRGB colour) {
 // Different brake light patterns/modes
 void Brake::chromaMode() {
     CRGB colours[] = {CRGB::Red, CRGB::Green, CRGB::Blue}; // List of colors
-    marqueeEffect(colours, 3, 30, 0.9f); // Speed of 50ms
+    marqueeEffect(colours, 3, 30, 0.9f); // Speed of 30ms, blend factor of 0.9
 }
 
 void Brake::christmasMode() {
     CRGB colours[] = { CRGB::Blue, CRGB::Red, CRGB::Green };
-    shiftPatternMode(colours, 3, 30, 10, false);
+    shiftPatternMode(colours, 3, 30, 10, false); // Speed of 30ms, size of 10
 }
 
 void Brake::halloweenMode() {
