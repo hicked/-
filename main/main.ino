@@ -6,8 +6,7 @@
 #include "gyro.h"
 #include "button.h"
 
-#define LED_DATA_PIN_1 4
-#define LED_DATA_PIN_2 5
+#define LED_DATA_PIN 5 // CHANGE TO 4 IF DATA PIN NOT WORKING
 
 #define NUM_LEDS 66
 #define LED_TYPE WS2815
@@ -20,8 +19,8 @@ Button *button;
 Signals *signals;
 
 void setup() {
-    FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, RGB>(leds, NUM_LEDS);
-    FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, RGB>(leds, NUM_LEDS);
+    FastLED.addLeds<LED_TYPE, LED_DATA_PIN, RGB>(leds, NUM_LEDS);
+    
     FastLED.clear();
     FastLED.setBrightness(GLOBAL_BRIGHTNESS);
 
@@ -66,7 +65,10 @@ void loop() {
     }
 
     if (SHOW_MARIO && gyro->smoothedAcc > MAX_GYRO_ACCELERATING) {
-        brake->marioStarMode();
+        CRGB colours[] = {CRGB::Red, CRGB::Green, CRGB::Blue};
+         // (list of colours, number of colours, speed, blend amount, start from center, reverse direction)
+        brake->chromaMode();
+
         signals->update(); // signals on top of mario star
     }
     else if (brake->flashCount == 0) {

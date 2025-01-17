@@ -11,7 +11,7 @@ Date is in YYYY/MM/DD format.
 **C**: Refactoring / Tiny Feature / Patch
 
 
-## [v.2.3.1-beta] - 2024-01-16
+## [v.2.3.2-beta] - 2024-01-16
 **Author:** Antoine
 -   Added switch cases for button modes
     -   **Dynamic (lights up progressively)**
@@ -21,6 +21,8 @@ Date is in YYYY/MM/DD format.
     -   Halloween
     -   Chroma
     -   Flashlight
+-   Added **bonus led data pin** in case `5` doesnt work use `4`
+-   Default button mode also added, along with `BUTTON_ENABLED`
 > Note, signal and brake inputs are set to `INPUT_PULLUP` for now to ignore noise. These will have to be swapped to `INPUT`. Signals input are also inverted for debugging purposes
 > Also note that, for testing purposes, gyroscope is taking in raw input (gravity is not disregarded)
 

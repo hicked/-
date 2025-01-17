@@ -56,13 +56,13 @@ private:
     void setSolid(CRGB colour); // set the entire LED strip to a single color
     void flashCenterLEDs(); // flash the center LEDs
 
-    void shiftPatternMode(CRGB colors[], int numColors, unsigned long speed, int size);
-    void marqueeEffect(CRGB* colors, int numColors, int speed, float blend);
+    void shiftPatternMode(CRGB colours[], int numColours, unsigned long speed, int size, bool invertDirection=false); // shift the pattern of the brake lights
+    void marqueeEffect(CRGB* colours, int numColours, int speed, float blendFactor, bool fromCenter=true, bool invertDirection=false);
     
     void christmasMode(); // show christmas lights on the brake lights
     void halloweenMode(); // show halloween lights on the brake lights
     void flashlightMode(); // show flashlight on the brake lights
-    CRGB blendColors(CRGB color1, CRGB color2, float factor);
+    CRGB blendColour(CRGB colour1, CRGB colour2, float blendFactor);
 
 public:
     bool initializedBraking = false; // status of the braking
@@ -74,8 +74,8 @@ public:
 
     bool brakeWireInput = false; // status of the brake based on wire input
 
-    Brake(Signals *signal, CRGB *leds, Gyro *gyro, Button *button, int num_leds);
+    Brake(Signals *signal, CRGB *leds, Gyro *gyro, Button *button, int numLEDs);
     void update(); // update the brake lights. numActiveLEDs and active_brightness must be changed externally (main)
     void flashRedLEDs(); // flash led strip red based on flashCount
-    void marioStarMode(); // show mario star on the brake lights
+    void chromaMode();
 };
