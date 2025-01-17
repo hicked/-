@@ -4,7 +4,7 @@
 #define BUTTON_PIN 8 // Pin for the button
 #define BUTTON_ENABLED true
 
-#define DEFAULT_MODE BRAKE_MODE_CHROMA // pick from the enum below
+#define DEFAULT_MODE BRAKE_MODE_DYNAMIC // pick from the enum below
 
 enum BrakeMode {
     BRAKE_MODE_STATIC, // Brake lights are all on when braking
