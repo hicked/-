@@ -13,6 +13,7 @@ Date is in YYYY/MM/DD format.
 
 ## [v.2.3.2-beta] - 2024-01-16
 **Author:** Antoine
+-   Refactoring
 -   Added switch cases for button modes
     -   **Dynamic (lights up progressively)**
     -   **Static (ON/OFF)** <br><br>
