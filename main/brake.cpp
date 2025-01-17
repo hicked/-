@@ -91,8 +91,14 @@ void Brake::dynamicBrakeMode() {
 void Brake::staticBrakeMode(){
     this->setSolid(BACKLIGHT_COLOUR); // Reset to background
     if (gyro->smoothedAcc < -MIN_GYRO_BREAKING || this->brakeWireInput) {
-        this->setSolid(CRGB(this->active_brightness, 0, 0)); // Red brake color
         this->flashCenterLEDs();
+        for (int i = 0; i < numLEDs/2 - CENTER_FLASH_WIDTH/2 - SIGNAL_LENGTH; i++) {
+            int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
+            int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1; 
+
+            this->LEDStrip[index1] = CRGB(this->active_brightness, 0, 0); // red brake color
+            this->LEDStrip[index2] = CRGB(this->active_brightness, 0, 0);
+        }        
     }
     else if (gyro->smoothedAcc > MIN_GYRO_ACCELERATING && SHOW_ACCEL) { // accelerating
         this->setSolid(CRGB(0, this->active_brightness, 0)); // Green brake color
