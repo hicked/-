@@ -26,6 +26,13 @@ void Brake::update() {
     }
 
     switch (this->button->mode) {
+        case BRAKE_MODE_DYNAMIC:
+            this->dynamicBrakeMode();
+            break;
+        case BRAKE_MODE_HAZARDS:
+            this->dynamicBrakeMode();
+            // Signals handled by signals class
+            break;
         case BRAKE_MODE_CHROMA:
             this->chromaMode();
             break;
@@ -47,6 +54,7 @@ void Brake::update() {
             break;
     }
 }
+
 
 
 void Brake::dynamicBrakeMode() {
@@ -92,7 +100,7 @@ void Brake::staticBrakeMode(){
     this->setSolid(BACKLIGHT_COLOUR); // Reset to background
     if (gyro->smoothedAcc < -MIN_GYRO_BREAKING || this->brakeWireInput) {
         this->flashCenterLEDs();
-        for (int i = 0; i < numLEDs/2 - CENTER_FLASH_WIDTH/2 - SIGNAL_LENGTH; i++) {
+        for (int i = 0; i < numLEDs/2 - CENTER_FLASH_WIDTH/2; i++) {
             int index1 = middleIndex + CENTER_FLASH_WIDTH/2 + i;
             int index2 = middleIndex - CENTER_FLASH_WIDTH/2 - i - 1; 
 
@@ -148,17 +156,17 @@ void Brake::setSolid(CRGB colour) {
 // Different brake light patterns/modes
 void Brake::chromaMode() {
     CRGB colours[] = {CRGB::Red, CRGB::Green, CRGB::Blue}; // List of colors
-    marqueeEffect(colours, 3, 30, 0.9f); // Speed of 30ms, blend factor of 0.9
+    marqueeEffect(colours, 3, 30, 0.85f, true, false);
 }
 
 void Brake::christmasMode() {
-    CRGB colours[] = { CRGB::Blue, CRGB::Red, CRGB::Green };
-    shiftPatternMode(colours, 3, 30, 10, false); // Speed of 30ms, size of 10
+    CRGB colours[] = { CRGB::Blue, CRGB::Purple, CRGB::Red, CRGB::Orange, CRGB::White, CRGB::Green };
+    shiftPatternMode(colours, 6, 30, 15, false); // Speed of 30ms, size of 10
 }
 
 void Brake::halloweenMode() {
-    CRGB colours[] = { CRGB::Purple, CRGB::Orange, CRGB::White };
-    marqueeEffect(colours, 3, 30, 0.9f, true, false);
+    CRGB colours[] = { CRGB::Purple, CRGB(255, 65, 0), CRGB::Black };
+    marqueeEffect(colours, 3, 30, 0.85f, true, false);
 }
 
 void Brake::flashlightMode() {
@@ -221,7 +229,7 @@ void Brake::marqueeEffect(CRGB* colours, int numColours, int speed, float blendF
                 int currentColour = effectiveIndex / (this->numLEDs / numColours); // Which segment (color) this LED belongs to
 
                 // Blend the two colors together based on the blend factor
-                this->LEDStrip[i] = this->blendColour(this->LEDStrip[i], colours[(currentColour + 1) % numColours], blendFactor);
+                this->LEDStrip[i] = this->blendColours(this->LEDStrip[i], colours[(currentColour + 1) % numColours], blendFactor);
             }
         } else {
             // Marquee from center to outwards
@@ -231,11 +239,13 @@ void Brake::marqueeEffect(CRGB* colours, int numColours, int speed, float blendF
                 int index2 = middleIndex - i - 1;
 
                 // Determine which color to use for the current LED based on the distance
-                int currentColour = (i - (invertDirection ? -offset : offset)) % this->numLEDs / (this->numLEDs / numColours);
+                int currentColourIndex = (i - (invertDirection ? -offset : offset)) % this->numLEDs / (this->numLEDs / numColours);
+                int nextColourIndex = (currentColourIndex + 1) % numColours;
+
 
                 // Apply the blended color to both the left and right LEDs
-                this->LEDStrip[index1] = this->blendColour(this->LEDStrip[index1], colours[(currentColour+1) % numColours], blendFactor);
-                this->LEDStrip[index2] = this->blendColour(this->LEDStrip[index2], colours[(currentColour+1) % numColours], blendFactor);
+                this->LEDStrip[index1] = this->blendColours(this->LEDStrip[index1], colours[nextColourIndex], blendFactor);
+                this->LEDStrip[index2] = this->blendColours(this->LEDStrip[index2], colours[nextColourIndex], blendFactor);
             }
         }
         // Increment the offset to extend the pattern outward symmetrically from the center
@@ -243,11 +253,21 @@ void Brake::marqueeEffect(CRGB* colours, int numColours, int speed, float blendF
     }
 }
 
-CRGB Brake::blendColour(CRGB colour1, CRGB colour2, float blendFactor) {
+CRGB Brake::blendColours(CRGB colour1, CRGB colour2, float blendFactor) {
     return CRGB
     (
         blendFactor * colour1.r + (1-blendFactor) * colour2.r,
         blendFactor * colour1.g + (1-blendFactor) * colour2.g,
         blendFactor * colour1.b + (1-blendFactor) * colour2.b
     );
+}
+
+CRGB Brake::blendDelta(CRGB colour1, CRGB colour2, int numSteps) {
+    // Calculate the difference between the two colors
+    int rDelta = colour2.r - colour1.r;
+    int gDelta = colour2.g - colour1.g;
+    int bDelta = colour2.b - colour1.b;
+
+    // Return the delta to be applied per step
+    return CRGB(rDelta / numSteps, gDelta / numSteps, bDelta / numSteps);
 }

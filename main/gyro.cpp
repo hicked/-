@@ -146,7 +146,7 @@ void Gyro::update() {
         this->sumSamples = 0.0;
 
         lastUpdateTime = millis();
-        Serial.print("Acc: ");
-        Serial.println(this->smoothedAcc);
+        // Serial.print("Acc: ");
+        // Serial.println(this->smoothedAcc);
     }
 }

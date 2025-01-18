@@ -38,7 +38,7 @@ void setup() {
     // Initialize objects
     gyro = new Gyro();
     button = new Button();
-    signals = new Signals(leds, NUM_LEDS);
+    signals = new Signals(leds, button, NUM_LEDS);
     brake = new Brake(signals, leds, gyro, button, NUM_LEDS);
     Serial.println("Setup complete");
 }
@@ -48,8 +48,8 @@ void loop() {
     gyro->update(); // Updates the value of smoothedAcc
     button->update(); // Updates the button mode
 
-    Serial.println(button->mode);
-    Serial.println(gyro->smoothedAcc);
+    // Serial.println(button->mode);
+    // Serial.println(gyro->smoothedAcc);
 
     // Update the number of active LEDs and brightness of the brake lights
     if (gyro->smoothedAcc > 0) { // accelerating

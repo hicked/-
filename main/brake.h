@@ -14,7 +14,7 @@
 #define FLASH_COLOUR CRGB(255, 0, 0) // Colour when the entire brake is flashing
 #define CENTER_FLASH_COLOUR CRGB(200, 0, 0) // Colour when the center is flashing
 
-#define GLOBAL_BRIGHTNESS 200 // 0-255, this might be broken since it gets overriden
+#define GLOBAL_BRIGHTNESS 255 // 0-255, this might be broken since it gets overriden
 #define MIN_BRAKE_BRIGHTNESS 100 // 0-255 minimum brightness of the brake when braking
 #define MAX_BRAKE_BRIGHTNESS 200 //0-255 maximum brightness of the brake when braking
 
@@ -60,12 +60,14 @@ private:
     void flashCenterLEDs(); // flash the center LEDs
 
     void shiftPatternMode(CRGB colours[], int numColours, unsigned long speed, int size, bool invertDirection=false); // shift the pattern of the brake lights
-    void marqueeEffect(CRGB* colours, int numColours, int speed, float blendFactor, bool fromCenter=true, bool invertDirection=false);
+    void marqueeEffect(CRGB* colours, int numColours, int speed, float blendFactor, bool fromCenter=true, bool invertDirection=false); // show marquee effect on the brake lights
+    // void marqueeEffect(CRGB* colours, int numColours, int speed, int sizeOfBlend, int sustain, bool fromCenter=true, bool invertDirection=false);
     
     void christmasMode(); // show christmas lights on the brake lights
     void halloweenMode(); // show halloween lights on the brake lights
     void flashlightMode(); // show flashlight on the brake lights
-    CRGB blendColour(CRGB colour1, CRGB colour2, float blendFactor);
+    CRGB blendColours(CRGB colour1, CRGB colour2, float blendFactor); // blend two colours together
+    CRGB blendDelta(CRGB colour1, CRGB colour2, int numSteps);
 
 public:
     bool initializedBraking = false; // status of the braking

@@ -1,8 +1,9 @@
 #include "signals.h"
 
-Signals::Signals(CRGB *leds, int num_leds) {
+Signals::Signals(CRGB *leds, Button *button, int num_leds) {
     this->LEDStrip = leds;
     this->numLEDs = num_leds;
+    this->button = button;
 }
 
 void Signals::update() {
@@ -45,6 +46,11 @@ void Signals::updateStates() {
         rightLastHighTime = millis();
     } else if (this->right && (millis() - rightLastHighTime >= SIGNAL_OFF_DELAY)) {
         this->right = false;
+    }
+
+    if (this->button->mode == BRAKE_MODE_HAZARDS) {
+        this->left = true;
+        this->right = true;
     }
 }
 
