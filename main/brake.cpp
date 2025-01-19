@@ -261,13 +261,3 @@ CRGB Brake::blendColours(CRGB colour1, CRGB colour2, float blendFactor) {
         blendFactor * colour1.b + (1-blendFactor) * colour2.b
     );
 }
-
-CRGB Brake::blendDelta(CRGB colour1, CRGB colour2, int numSteps) {
-    // Calculate the difference between the two colors
-    int rDelta = colour2.r - colour1.r;
-    int gDelta = colour2.g - colour1.g;
-    int bDelta = colour2.b - colour1.b;
-
-    // Return the delta to be applied per step
-    return CRGB(rDelta / numSteps, gDelta / numSteps, bDelta / numSteps);
-}

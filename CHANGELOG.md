@@ -10,8 +10,18 @@ Date is in YYYY/MM/DD format.
 
 **C**: Refactoring / Tiny Feature / Patch
 
+## [v.0.4.1-alpha] - 2024-01-18
+**Author:** Antoine
+-   Renamed versions, v1.0.0 should be out soon
+-   Refactoring
+-   Made general functions for LED patterns that can be adjusted manually
+    -   May need some refactoring/polishing for `marquee`
+-   Fixed dynamic brake mode not working
+-   Gyro filter affectiveness to be determined
+> Note, signal and brake inputs are set to `INPUT_PULLUP` for now to ignore noise. These will have to be swapped to `INPUT`. Signals input are also inverted for debugging purposes
+> Also note that, for testing purposes, gyroscope is taking in raw input (gravity is not disregarded)
 
-## [v.2.3.2-beta] - 2024-01-16
+## [v.0.4.0-alpha] - 2024-01-16
 **Author:** Antoine
 -   Refactoring
 -   Added switch cases for button modes
@@ -27,7 +37,7 @@ Date is in YYYY/MM/DD format.
 > Note, signal and brake inputs are set to `INPUT_PULLUP` for now to ignore noise. These will have to be swapped to `INPUT`. Signals input are also inverted for debugging purposes
 > Also note that, for testing purposes, gyroscope is taking in raw input (gravity is not disregarded)
 
-## [v.2.2.1-beta] - 2024-01-05
+## [v.0.3.2-alpha] - 2024-01-05
 **Author:** Antoine
 -   Finalized Signals
 -   Added flashlight
@@ -36,7 +46,7 @@ Date is in YYYY/MM/DD format.
 -   Included circuit diagram and other media
 > Note, signal and brake inputs are set to `INPUT_PULLUP` for now to ignore noise. These will have to be swapped to `INPUT`. Signals input are also inverted for debugging purposes
 
-## [v.2.2.0-beta] - 2024-12-29
+## [v.0.3.1-alpha] - 2024-12-29
 **Author:** Antoine
 -   Fixed brake light flashing logic that wasnt working
 -   Made it so the center leds always flash when braking
@@ -45,7 +55,7 @@ Date is in YYYY/MM/DD format.
 -   Implemented detecting of signal from wire input of bike
 > Note all colours are in GRB for now since different leds are used
 
-## [v.2.1.0-prealpha] - 2024-12-26
+## [v.0.3.0-alpha] - 2024-12-26
 **Author:** Antoine
 -   Gyro logic, including filter, completed.
     -   Now ignores gravity (calculated during calibration phase on startup)
@@ -59,7 +69,7 @@ Date is in YYYY/MM/DD format.
 > Lots of parameters can be changed in the `gyro.h` header file to get more favorable results
 
 
-## [v.1.1.0-prealpha] - 2024-11-30
+## [v.0.2.0-prealpha] - 2024-11-30
 **Author:** Antoine
 -   **ALL CONTROL BASED ON GYRO AS INTENDED**
 -   ADDED CONRTOLS BASED ON GYRO Y AXIS
@@ -67,7 +77,7 @@ Date is in YYYY/MM/DD format.
 -   Issue with brake light, too sensitive, sometimes ini flash will be continuous
 > ENSURE GYRO IS FLAT. IT WILL PRINT INITIAL VALUES TO LET YOU KNOW
 
-## [v.1.0.0] - 2024-11-28
+## [v.0.1.0-prealpha] - 2024-11-28
 **Author:** Antoine
 -   **ALL CONTROL BASED ON ENCODER FOR TESTING PURPOSES**
 -   Sequential brake lights work

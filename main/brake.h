@@ -67,7 +67,6 @@ private:
     void halloweenMode(); // show halloween lights on the brake lights
     void flashlightMode(); // show flashlight on the brake lights
     CRGB blendColours(CRGB colour1, CRGB colour2, float blendFactor); // blend two colours together
-    CRGB blendDelta(CRGB colour1, CRGB colour2, int numSteps);
 
 public:
     bool initializedBraking = false; // status of the braking
